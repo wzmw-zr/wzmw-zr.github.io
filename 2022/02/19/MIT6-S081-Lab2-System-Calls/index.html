@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="wzmw-zr">
+    
+    <title>
+        
+            MIT6.S081 Lab2 System Calls |
+        
+        无字铭文のBlog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                无字铭文のBlog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                CATEGORIES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">CATEGORIES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">MIT6.S081 Lab2 System Calls</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">wzmw-zr</span>
+                        
+                            <span class="author-label">Lv1</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-02-19 19:00:40</span>
+        <span class="mobile">2022-02-19 19:00</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Lab2：-System-calls"><a href="#Lab2：-System-calls" class="headerlink" title="Lab2： System calls"></a>Lab2： System calls</h1><p>实验2给我的收获：理解了用户态程序进行系统调用切换到内核态的过程，以及trapframe作为系统调用用户态与内核态参数与返回值中转的作用。</p>
+<h2 id="System-call-tracing"><a href="#System-call-tracing" class="headerlink" title="System call tracing"></a>System call tracing</h2><p>实现一个追踪系统调用的系统调用。用法在<code>user/trace.c</code>中给出了，<code>uint64_t trace(int mask)</code>，这是用户态程序调用系统调用的函数。之后跟着实验提示进行即可。</p>
+<p><strong>用户态程序调用系统调用<code>trace(mask)</code>之后，设置寄存器a7为该系统调用在内核中系统调用数组的下标（在syscall.h中定义了对应的宏），使用ecall进入sys_trace()，使用trapframe存储用户态传给系统调用的参数，以及系统调用的返回值等</strong>。</p>
+<p>trapframe的结构定义在<code>kernel/proc.h</code>，可以发现，trapframe的成员对应寄存器的值，系统调用使用寄存器记录传入参数与返回值，<strong>使用trapframe将用户态的函数调用栈和内核态的函数调用栈分开了</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// per-process data for the trap handling code in trampoline.S.</span></span><br><span class="line"><span class="comment">// sits in a page by itself just under the trampoline page in the</span></span><br><span class="line"><span class="comment">// user page table. not specially mapped in the kernel page table.</span></span><br><span class="line"><span class="comment">// the sscratch register points here.</span></span><br><span class="line"><span class="comment">// uservec in trampoline.S saves user registers in the trapframe,</span></span><br><span class="line"><span class="comment">// then initializes registers from the trapframe&#x27;s</span></span><br><span class="line"><span class="comment">// kernel_sp, kernel_hartid, kernel_satp, and jumps to kernel_trap.</span></span><br><span class="line"><span class="comment">// usertrapret() and userret in trampoline.S set up</span></span><br><span class="line"><span class="comment">// the trapframe&#x27;s kernel_*, restore user registers from the</span></span><br><span class="line"><span class="comment">// trapframe, switch to the user page table, and enter user space.</span></span><br><span class="line"><span class="comment">// the trapframe includes callee-saved user registers like s0-s11 because the</span></span><br><span class="line"><span class="comment">// return-to-user path via usertrapret() doesn&#x27;t return through</span></span><br><span class="line"><span class="comment">// the entire kernel call stack.</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> &#123;</span></span><br><span class="line">  <span class="comment">/*   0 */</span> uint64 kernel_satp;   <span class="comment">// kernel page table</span></span><br><span class="line">  <span class="comment">/*   8 */</span> uint64 kernel_sp;     <span class="comment">// top of process&#x27;s kernel stack</span></span><br><span class="line">  <span class="comment">/*  16 */</span> uint64 kernel_trap;   <span class="comment">// usertrap()</span></span><br><span class="line">  <span class="comment">/*  24 */</span> uint64 epc;           <span class="comment">// saved user program counter</span></span><br><span class="line">  <span class="comment">/*  32 */</span> uint64 kernel_hartid; <span class="comment">// saved kernel tp</span></span><br><span class="line">  <span class="comment">/*  40 */</span> uint64 ra;</span><br><span class="line">  <span class="comment">/*  48 */</span> uint64 sp;</span><br><span class="line">  <span class="comment">/*  56 */</span> uint64 gp;</span><br><span class="line">  <span class="comment">/*  64 */</span> uint64 tp;</span><br><span class="line">  <span class="comment">/*  72 */</span> uint64 t0;</span><br><span class="line">  <span class="comment">/*  80 */</span> uint64 t1;</span><br><span class="line">  <span class="comment">/*  88 */</span> uint64 t2;</span><br><span class="line">  <span class="comment">/*  96 */</span> uint64 s0;</span><br><span class="line">  <span class="comment">/* 104 */</span> uint64 s1;</span><br><span class="line">  <span class="comment">/* 112 */</span> uint64 a0;</span><br><span class="line">  <span class="comment">/* 120 */</span> uint64 a1;</span><br><span class="line">  <span class="comment">/* 128 */</span> uint64 a2;</span><br><span class="line">  <span class="comment">/* 136 */</span> uint64 a3;</span><br><span class="line">  <span class="comment">/* 144 */</span> uint64 a4;</span><br><span class="line">  <span class="comment">/* 152 */</span> uint64 a5;</span><br><span class="line">  <span class="comment">/* 160 */</span> uint64 a6;</span><br><span class="line">  <span class="comment">/* 168 */</span> uint64 a7;</span><br><span class="line">  <span class="comment">/* 176 */</span> uint64 s2;</span><br><span class="line">  <span class="comment">/* 184 */</span> uint64 s3;</span><br><span class="line">  <span class="comment">/* 192 */</span> uint64 s4;</span><br><span class="line">  <span class="comment">/* 200 */</span> uint64 s5;</span><br><span class="line">  <span class="comment">/* 208 */</span> uint64 s6;</span><br><span class="line">  <span class="comment">/* 216 */</span> uint64 s7;</span><br><span class="line">  <span class="comment">/* 224 */</span> uint64 s8;</span><br><span class="line">  <span class="comment">/* 232 */</span> uint64 s9;</span><br><span class="line">  <span class="comment">/* 240 */</span> uint64 s10;</span><br><span class="line">  <span class="comment">/* 248 */</span> uint64 s11;</span><br><span class="line">  <span class="comment">/* 256 */</span> uint64 t3;</span><br><span class="line">  <span class="comment">/* 264 */</span> uint64 t4;</span><br><span class="line">  <span class="comment">/* 272 */</span> uint64 t5;</span><br><span class="line">  <span class="comment">/* 280 */</span> uint64 t6;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>实验提示要求我们在<code>kernel/sysproc.h</code>中的<code>struct proc</code>中增加trace的掩码变量，在调用<code>trace(mask)</code>跳转到<code>sys_trace(void)</code>时获得trapframe对应掩码的参数，给proc中对应变量赋值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_trace</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> mask;</span><br><span class="line">  <span class="keyword">if</span> (argint(<span class="number">0</span>, &amp;mask) &lt; <span class="number">0</span>) </span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  myproc()-&gt;trace_mask = mask;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据实验提示fork函数中将掩码值也拷贝给子进程。</p>
+<p>之后，需要打印提示，阅读<code>kernel/syscall.c</code>的代码，增加一个系统调用字符串名字的数组，在<code>syscall()</code>函数中增加打印部分的代码。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_chdir</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_close</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_dup</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_exec</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_exit</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_fork</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_fstat</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_getpid</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_kill</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_link</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_mkdir</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_mknod</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_open</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_pipe</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_read</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_sbrk</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_sleep</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_unlink</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_wait</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_write</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_uptime</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_trace</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> uint64 <span class="title">sys_sysinfo</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">uint64</span> <span class="params">(*syscalls[])</span><span class="params">(<span class="keyword">void</span>)</span> </span>= &#123;</span><br><span class="line">[SYS_fork]    sys_fork,</span><br><span class="line">[SYS_exit]    sys_exit,</span><br><span class="line">[SYS_wait]    sys_wait,</span><br><span class="line">[SYS_pipe]    sys_pipe,</span><br><span class="line">[SYS_read]    sys_read,</span><br><span class="line">[SYS_kill]    sys_kill,</span><br><span class="line">[SYS_exec]    sys_exec,</span><br><span class="line">[SYS_fstat]   sys_fstat,</span><br><span class="line">[SYS_chdir]   sys_chdir,</span><br><span class="line">[SYS_dup]     sys_dup,</span><br><span class="line">[SYS_getpid]  sys_getpid,</span><br><span class="line">[SYS_sbrk]    sys_sbrk,</span><br><span class="line">[SYS_sleep]   sys_sleep,</span><br><span class="line">[SYS_uptime]  sys_uptime,</span><br><span class="line">[SYS_open]    sys_open,</span><br><span class="line">[SYS_write]   sys_write,</span><br><span class="line">[SYS_mknod]   sys_mknod,</span><br><span class="line">[SYS_unlink]  sys_unlink,</span><br><span class="line">[SYS_link]    sys_link,</span><br><span class="line">[SYS_mkdir]   sys_mkdir,</span><br><span class="line">[SYS_close]   sys_close,</span><br><span class="line">[SYS_trace]   sys_trace,</span><br><span class="line">[SYS_sysinfo] sys_sysinfo,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// array of syscall names, used for trace.</span></span><br><span class="line"><span class="keyword">char</span> *syscall_names[] = &#123;<span class="string">&quot;&quot;</span>, <span class="string">&quot;fork&quot;</span>, <span class="string">&quot;exit&quot;</span>, <span class="string">&quot;wait&quot;</span>, <span class="string">&quot;pipe&quot;</span>, <span class="string">&quot;read&quot;</span>, <span class="string">&quot;kill&quot;</span>, <span class="string">&quot;exec&quot;</span>, <span class="string">&quot;fstat&quot;</span>, <span class="string">&quot;chdir&quot;</span>, <span class="string">&quot;dup&quot;</span>, <span class="string">&quot;getpid&quot;</span>, <span class="string">&quot;sbrk&quot;</span>, <span class="string">&quot;sleep&quot;</span>, <span class="string">&quot;uptime&quot;</span>, <span class="string">&quot;open&quot;</span>, <span class="string">&quot;write&quot;</span>, <span class="string">&quot;mknod&quot;</span>, <span class="string">&quot;unlink&quot;</span>, <span class="string">&quot;link&quot;</span>, <span class="string">&quot;mkdir&quot;</span>, <span class="string">&quot;close&quot;</span>, <span class="string">&quot;trace&quot;</span>, <span class="string">&quot;sysinfo&quot;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">syscall</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> num;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line"></span><br><span class="line">  num = p-&gt;trapframe-&gt;a7;</span><br><span class="line">  <span class="keyword">if</span>(num &gt; <span class="number">0</span> &amp;&amp; num &lt; NELEM(syscalls) &amp;&amp; syscalls[num]) &#123;</span><br><span class="line">    p-&gt;trapframe-&gt;a0 = syscalls[num]();</span><br><span class="line">    <span class="comment">// if current syscall is traced, print information.</span></span><br><span class="line">    <span class="keyword">if</span> (p-&gt;trace_mask &amp; (<span class="number">1</span> &lt;&lt; num)) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;%d: syscall %s -&gt; %d\n&quot;</span>, p-&gt;pid, syscall_names[num], p-&gt;trapframe-&gt;a0);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d %s: unknown sys call %d\n&quot;</span>,</span><br><span class="line">            p-&gt;pid, p-&gt;name, num);</span><br><span class="line">    p-&gt;trapframe-&gt;a0 = <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Sysinfo"><a href="#Sysinfo" class="headerlink" title="Sysinfo"></a>Sysinfo</h2><p>这部分重点在于用户态的系统调用传入地址，内核需要从用户态内存读/写的操作。</p>
+<p>在<code>kernel/kalloc.c</code>中增加统计空余内存的函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">run</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">spinlock</span> <span class="title">lock</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">freelist</span>;</span>	<span class="comment">// free physical pages</span></span><br><span class="line">&#125; kmem;</span><br><span class="line"></span><br><span class="line"><span class="comment">// collect amount of free memory</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">num_free_memory</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">r</span> =</span> kmem.freelist;</span><br><span class="line">  <span class="keyword">int</span> free_mem = <span class="number">0</span>;</span><br><span class="line">  acquire(&amp;kmem.lock);</span><br><span class="line">  <span class="comment">// traverse free page </span></span><br><span class="line">  <span class="keyword">while</span> (r) &#123;</span><br><span class="line">    free_mem += PGSIZE;</span><br><span class="line">    r = r-&gt;next;</span><br><span class="line">  &#125;</span><br><span class="line">  release(&amp;kmem.lock);</span><br><span class="line">  <span class="keyword">return</span> free_mem;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>kernel/proc.c</code>中增加统计状态不是UNUSED的进程数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">num_process</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; NPROC; i++) &#123;</span><br><span class="line">    acquire(&amp;proc[i].lock);</span><br><span class="line">    <span class="keyword">if</span> (proc[i].state != UNUSED) </span><br><span class="line">      cnt++;</span><br><span class="line">    release(&amp;proc[i].lock);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> cnt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>kernel/sysproc.c</code>中增加<code>sys_sysinfo(void)</code>，这里的重点是<strong>系统调用有传出参数（地址），所以需要使用<code>copyout</code>函数，将内核空间的数据拷贝到用户空间</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">int</span> <span class="title">num_free_memory</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">int</span> <span class="title">num_process</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_sysinfo</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  uint64 addr;</span><br><span class="line">  argaddr(<span class="number">0</span>, &amp;addr);</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sysinfo</span> <span class="title">res</span>;</span></span><br><span class="line">  res.freemem = num_free_memory();</span><br><span class="line">  res.nproc = num_process();</span><br><span class="line">  <span class="keyword">if</span> (copyout(myproc()-&gt;pagetable, addr, (<span class="keyword">char</span> *) &amp;res, <span class="keyword">sizeof</span>(res)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/02/19/MIT6-S081-Lab3-Page-Table/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6.S081 Lab3 Page Table</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/02/19/MIT6-S081-Lab1/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6.S081 Lab1 Unix utilities</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">wzmw-zr</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
