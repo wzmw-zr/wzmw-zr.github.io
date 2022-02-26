@@ -133,6 +133,93 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2022/02/26/MIT6-S081-Lab6-Copy-on-Write-Fork/">
+                        MIT6.S081 Lab6 Copy-on-Write Fork
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        Lab6: Copy-on-Write ForkLab6要求是先Copy-on-Write Fork，这是虚拟内存部分的又一个优化。该优化的出发点是xv6中的系统调用fork拷贝了父进程的所有用户空间内存到子进程，如果父进程很大，拷贝会使用很长时间，...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Feb 26 2022 18:03:07 GMT+0800">2022-02-26</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/02/26/MIT6-S081-Lab6-Copy-on-Write-Fork/">Read more&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/02/26/MIT6-S081-Lab5-Xv6-lazy-page-allocation/">
+                        MIT6.S081 Lab5 Xv6 lazy page allocation
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        Lab5：xv6 lazy page allocationLab5要求实现懒惰页面分配，即sbrk时并不真正分配物理页面，在实际使用时再分配（这里的实际使用可以是在发生缺页中断、从用户空间读写内容），懒惰页面分配是一种虚拟内存使用上的优化，避免了不必...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Feb 26 2022 18:02:47 GMT+0800">2022-02-26</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/02/26/MIT6-S081-Lab5-Xv6-lazy-page-allocation/">Read more&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/02/26/MIT6-S081-Lab4-Traps/">
+                        MIT6.S081 Lab4 Traps
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        Lab4: Traps做完Lab4的收获：
+
+我理解了trap（系统调用、异常、硬件中断）来自用户空间的trap的处理流程：uservec-&gt;usertrap-&gt;usertrapret-&gt;userret 。
+进入uservec之前，...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Feb 26 2022 18:01:57 GMT+0800">2022-02-26</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/02/26/MIT6-S081-Lab4-Traps/">Read more&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2022/02/19/MIT6-S081-Lab3-Page-Table/">
                         MIT6.S081 Lab3 Page Table
                     </a>

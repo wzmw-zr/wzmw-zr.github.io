@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="wzmw-zr">
+    
+    <title>
+        
+            MIT6.S081 Lab4 Traps |
+        
+        无字铭文のBlog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                无字铭文のBlog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                CATEGORIES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">CATEGORIES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">MIT6.S081 Lab4 Traps</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">wzmw-zr</span>
+                        
+                            <span class="author-label">Lv2</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-02-26 18:01:57</span>
+        <span class="mobile">2022-02-26 18:01</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Lab4-Traps"><a href="#Lab4-Traps" class="headerlink" title="Lab4: Traps"></a>Lab4: Traps</h1><p>做完Lab4的收获：</p>
+<ol>
+<li>我理解了trap（系统调用、异常、硬件中断）来自用户空间的trap的处理流程：uservec-&gt;usertrap-&gt;usertrapret-&gt;userret 。<ul>
+<li><strong>进入uservec之前，比如调用ecall指令时，硬件就已经完成了一些操作，切换到内核态、根据stvec存储的uservec进入uservec等</strong>。</li>
+<li><strong>uservec：主要是保存现场，并且切换到内核页表。</strong></li>
+<li><strong>usertrap：根据trap的类型进行相应的处理。</strong></li>
+<li><strong>usertrapret：trap处理完了，需要对trapframe等进行更新，外加其他处理操作。</strong></li>
+<li><strong>userret：切换回用户页表，恢复现场。</strong></li>
+</ul>
+</li>
+<li>知道了trampoline page中存放的是uservec和userret。</li>
+<li>trapframe在trap发生时进入内核态，进入trap向量uservec保存现场，切换页表，从userret切回页表，返回用户空间恢复现场。</li>
+<li>用户空间进入内核空间需要保存现场，从内核空间调用用户空间的函数也需要另一个trapframe保存现场。</li>
+</ol>
+<p>Trap主要有3种类型：系统调用、异常、硬件中断。Lab4主要是关注的是来自用户空间的trap。</p>
+<p>来自用户空间的trap的工作流程，以系统调用为例：</p>
+<p>用户程序进行系统调用，当前trap向量stvec是trampoline中的uservec，在ecall指令之后，从用户态切换到内核态，硬件会自动完成一些操作：设置epc为用户被中断指令的下一条指令的地址等，进入uservec，之后将寄存器值存储在trapframe中（保存现场），切换页表等，再进入usertrap()函数，根据sscuase寄存器的值判断trap的类型，如果是系统调用，就转到系统调用的处理，完成后usertrapret()，完成另外一些操作，后userret，切换页表，恢复用户程序的现场（pc [用epc恢复]，寄存器等），继续执行。</p>
+<h2 id="Task1-RISC-V-assembly"><a href="#Task1-RISC-V-assembly" class="headerlink" title="Task1: RISC-V assembly"></a>Task1: RISC-V assembly</h2><p>执行<code>make fs.img</code>，查看<code>user/call.c</code>对应的汇编代码<code>user/call.asm</code>。</p>
+<p>本科学过汇编（虽然学了计组、微机原理，只限于考试手写汇编。。。），也没写过汇编程序，所以理解汇编代码时遇到了一些困难：</p>
+<ol>
+<li>关于pc，比如<code>4: 0800   addi s0,sp,16</code>，最前面的4就是执行当前指令时pc的值。</li>
+<li>关于<code>auipc</code>指令：<code>auipc a0, 0x0</code>，功能是将后面的立即数左移12位和当前pc相加写入寄存器a0。</li>
+<li>关于<code>jalr</code>指令：<code>jalr 1536(ra)</code>，将当前pc的值加4写入ra，原ra的值加偏移量1536（十进制）作为跳转的地址（转成16进制后在汇编代码中找）。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">0000000000000000 &lt;g&gt;:</span><br><span class="line">#include &quot;kernel/param.h&quot;</span><br><span class="line">#include &quot;kernel/types.h&quot;</span><br><span class="line">#include &quot;kernel/stat.h&quot;</span><br><span class="line">#include &quot;user/user.h&quot;</span><br><span class="line"></span><br><span class="line">int g(int x) &#123;</span><br><span class="line">   0:   1141                    addi    sp,sp,-16</span><br><span class="line">   2:   e422                    sd      s0,8(sp)</span><br><span class="line">   4:   0800                    addi    s0,sp,16</span><br><span class="line">  return x+3;</span><br><span class="line">&#125;</span><br><span class="line">   6:   250d                    addiw   a0,a0,3</span><br><span class="line">   8:   6422                    ld      s0,8(sp)</span><br><span class="line">   a:   0141                    addi    sp,sp,16</span><br><span class="line">   c:   8082                    ret</span><br><span class="line"></span><br><span class="line">000000000000000e &lt;f&gt;:</span><br><span class="line"></span><br><span class="line">int f(int x) &#123;</span><br><span class="line">   e:   1141                    addi    sp,sp,-16</span><br><span class="line">  10:   e422                    sd      s0,8(sp)</span><br><span class="line">  12:   0800                    addi    s0,sp,16</span><br><span class="line">  return g(x);</span><br><span class="line">&#125;</span><br><span class="line">  14:   250d                    addiw   a0,a0,3</span><br><span class="line">  16:   6422                    ld      s0,8(sp)</span><br><span class="line">  18:   0141                    addi    sp,sp,16</span><br><span class="line">  1a:   8082                    ret</span><br><span class="line"></span><br><span class="line">000000000000001c &lt;main&gt;:</span><br><span class="line"></span><br><span class="line">void main(void) &#123;</span><br><span class="line">  1c:   1141                    addi    sp,sp,-16</span><br><span class="line">  1e:   e406                    sd      ra,8(sp)</span><br><span class="line">  20:   e022                    sd      s0,0(sp)</span><br><span class="line">  22:   0800                    addi    s0,sp,16</span><br><span class="line">  printf(&quot;%d %d\n&quot;, f(8)+1, 13);</span><br><span class="line">  24:   4635                    li      a2,13</span><br><span class="line">  26:   45b1                    li      a1,12</span><br><span class="line">  28:   00000517                auipc   a0,0x0</span><br><span class="line">  2c:   7b050513                addi    a0,a0,1968 # 7d8 &lt;malloc+0xea&gt;</span><br><span class="line">  30:   00000097                auipc   ra,0x0</span><br><span class="line">  34:   600080e7                jalr    1536(ra) # 630 &lt;printf&gt;</span><br><span class="line">  exit(0);</span><br><span class="line">  38:   4501                    li      a0,0</span><br><span class="line">  3a:   00000097                auipc   ra,0x0</span><br><span class="line">  3e:   27e080e7                jalr    638(ra) # 2b8 &lt;exit&gt;</span><br></pre></td></tr></table></figure>
+
+<p>实验的问题以及答案：</p>
+<ol>
+<li><p>包含函数参数的寄存器，a0（可以传参数的寄存器最多有8个a0 - a7，如果有更多的参数需要使用栈）。</p>
+</li>
+<li><p>main调用函数f的汇编代码的地址，调用函数g的汇编代码地址，因为编译器内联优化，两者在编译时就计算出来了。</p>
+</li>
+<li><p>函数printf的地址：1536 + 0x30 = 1584 = 0x630。</p>
+</li>
+<li><p>在main中调用jalr到printf后的ra的值：0x38。</p>
+</li>
+<li><p>RISC-V是小端序（little-endian），下面代码的输出：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0x00646c72</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;H%x Wo%s&quot;</span>, <span class="number">57616</span>, &amp;i);</span><br></pre></td></tr></table></figure>
+
+<p>He110 World。</p>
+</li>
+<li><p>在下面的代码，”y=”之后会输出什么？为什么会这样？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;x=%d y=%d&quot;</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<p>x=3 y=一个不确定的数字，gdb调试看info reg感觉是a2寄存器的值，因为这会调用printint，输出的值根据va_arg(ap, int)确定，但是没有第二个输出的值。</p>
+</li>
+</ol>
+<h2 id="Task2-Backtrace"><a href="#Task2-Backtrace" class="headerlink" title="Task2 Backtrace"></a>Task2 Backtrace</h2><p>backtrace在调试时很有用，可以在错误发生时打印栈中的函数调用。这需要知道栈帧的布局：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">Stack</span><br><span class="line">                   .</span><br><span class="line">                   .</span><br><span class="line">      +-&gt;          .</span><br><span class="line">      |   +-----------------+   |</span><br><span class="line">      |   | return address  |   |</span><br><span class="line">      |   |   previous fp ------+</span><br><span class="line">      |   | saved registers |</span><br><span class="line">      |   | local variables |</span><br><span class="line">      |   |       ...       | &lt;-+</span><br><span class="line">      |   +-----------------+   |</span><br><span class="line">      |   | return address  |   |</span><br><span class="line">      +------ previous fp   |   |</span><br><span class="line">          | saved registers |   |</span><br><span class="line">          | local variables |   |</span><br><span class="line">      +-&gt; |       ...       |   |</span><br><span class="line">      |   +-----------------+   |</span><br><span class="line">      |   | return address  |   |</span><br><span class="line">      |   |   previous fp ------+</span><br><span class="line">      |   | saved registers |</span><br><span class="line">      |   | local variables |</span><br><span class="line">      |   |       ...       | &lt;-+</span><br><span class="line">      |   +-----------------+   |</span><br><span class="line">      |   | return address  |   |</span><br><span class="line">      +------ previous fp   |   |</span><br><span class="line">          | saved registers |   |</span><br><span class="line">          | local variables |   |</span><br><span class="line">  $fp --&gt; |       ...       |   |</span><br><span class="line">          +-----------------+   |</span><br><span class="line">          | return address  |   |</span><br><span class="line">          |   previous fp ------+</span><br><span class="line">          | saved registers |</span><br><span class="line">  $sp --&gt; | local variables |</span><br><span class="line">          +-----------------+</span><br></pre></td></tr></table></figure>
+
+<p>返回地址在栈帧的帧指针的固定偏移-8的位置，保存的帧指针在帧指针固定偏移量-16处。</p>
+<p>GCC编译器在寄存器s0存储当前执行函数的栈指针，将下面的函数加入<code>kernel/riscv.h</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> uint64</span></span><br><span class="line"><span class="function"><span class="title">r_fp</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint64 x;</span><br><span class="line">  <span class="function"><span class="keyword">asm</span> <span class="title">volatile</span><span class="params">(<span class="string">&quot;mv %0, s0&quot;</span> : <span class="string">&quot;=r&quot;</span> (x) )</span></span>;</span><br><span class="line">  <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在backtrace中调用该函数来读取当前的帧指针。该函数使用内联汇编，来读取s0。因为这里默认用户栈就一个页面（4096字节），所以Xv6为xv6内核的每个栈在页对齐的地址分配页面，可以通过<code>PGROUNDDOWN(fp)</code>和<code>PGROUNDUP(fp)</code>计算栈页的上下界，PRGOUNDUP(fp)是栈底。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Lab4 Task2</span></span><br><span class="line"><span class="comment"> * Backtrace</span></span><br><span class="line"><span class="comment"> * Get stack frame pointer fp, print the return address, </span></span><br><span class="line"><span class="comment"> * change to caller stack frame pointer, until fp equals PGROUNDUP(fp),</span></span><br><span class="line"><span class="comment"> * for the toppest caller function create the stack page, and first fp </span></span><br><span class="line"><span class="comment"> * is stack page address.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">backtrace</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  uint64 fp = r_fp();</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;backtrace:\n&quot;</span>);</span><br><span class="line">  <span class="keyword">while</span> (fp != PGROUNDUP(fp)) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, *(uint64 *)(fp - <span class="number">8</span>));</span><br><span class="line">    fp = *(uint64 *)(fp - <span class="number">16</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>kernel/printf.c</code>中实现<code>backtrace()</code>。将该函数插入到<code>sys_sleep()</code>，然后运行<code>bttest</code>，输出应该是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">backtrace:</span><br><span class="line">0x0000000080002cda</span><br><span class="line">0x0000000080002bb6</span><br><span class="line">0x0000000080002898</span><br></pre></td></tr></table></figure>
+
+<p>在bttest退出qemu后，在你的终端：地址可能稍微不同，但是运行<code>addr2line -e kernel/kernel</code> (or <code>riscv64-unknown-elf-addr2line -e kernel/kernel</code>) ，拷贝并粘贴上面的地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ addr2line -e kernel/kernel</span><br><span class="line">0x0000000080002de2</span><br><span class="line">0x0000000080002f4a</span><br><span class="line">0x0000000080002bfc</span><br><span class="line">Ctrl-D</span><br></pre></td></tr></table></figure>
+
+<p>可以看到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kernel/sysproc.c:74</span><br><span class="line">kernel/syscall.c:224</span><br><span class="line">kernel/trap.c:85</span><br></pre></td></tr></table></figure>
+
+<p>在<code>kernel/printf.c</code>中的<code>panic</code>中调用backtrace，这样你就可以看到当panic时内核的backtrace了，再看kernel.asm找对应的地址，可以帮助调试。</p>
+<blockquote>
+<p>PS：进阶的作业是将backtrace输出地址变成具体函数及所在行，有机会实现一下。</p>
+</blockquote>
+<h2 id="Task3-Alarm"><a href="#Task3-Alarm" class="headerlink" title="Task3 Alarm"></a>Task3 Alarm</h2><p>Task3通过系统调用<code>sigalarm(interval, handler)</code>开启定时器，在到达时间后执行用户空间的handler函数，这是Task3的难点，<strong>因为时钟中断时，进程处于内核态，当前trapframe的epc并不是handler的地址，强行将trapframe的epc改成handler的地址返回用户态，确实可以执行handler，但是这一趟执行回来trapframe的内容全变了，因此，需要提前保存trapframe的内容到另一个trapframe中，在sigreturn中恢复原本的trapframe</strong>。在<code>struct proc</code>中增加alarm_trapframe，handler，interval以及定时需要的项。</p>
+<p>一些提示：</p>
+<ol>
+<li><code>sys_sigalaram()</code>应当将alaram interval和handler function pointer存到进程的结构新字段。</li>
+<li>需要记录自从上一次调用进程alarm handler过了多少tick，你也需要在<code>struct proc</code>中增加该字段。你可以在<code>allocproc()</code>中初始化这些字段。</li>
+<li>每个tick，硬件时钟会强制一个中断，这在kernel/trap.c中的usertrap()处理，每个tick，进程中记录tick的项加1，如果需要执行用户空间的handler函数，就先保存trapframe的内容到进程中新的一项trapframe <code>alarm_trapframe</code>，trapframe中的epc设为handler的地址，定时器的tick置零，然后返回用户空间执行，用户空间的handler最后执行sigreturn，再将trapframe恢复。</li>
+<li>防止对handler的重复调用，如果一个handler没有return，内核不允许重新调用该handler，在进程中增加一项handler_running表示handler是否在运行。</li>
+</ol>
+<p><code>struct proc</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Per-process state</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">spinlock</span> <span class="title">lock</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// p-&gt;lock must be held when using these:</span></span><br><span class="line">  <span class="class"><span class="keyword">enum</span> <span class="title">procstate</span> <span class="title">state</span>;</span>        <span class="comment">// Process state</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">parent</span>;</span>         <span class="comment">// Parent process</span></span><br><span class="line">  <span class="keyword">void</span> *chan;                  <span class="comment">// If non-zero, sleeping on chan</span></span><br><span class="line">  <span class="keyword">int</span> killed;                  <span class="comment">// If non-zero, have been killed</span></span><br><span class="line">  <span class="keyword">int</span> xstate;                  <span class="comment">// Exit status to be returned to parent&#x27;s wait</span></span><br><span class="line">  <span class="keyword">int</span> pid;                     <span class="comment">// Process ID</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// these are private to the process, so p-&gt;lock need not be held.</span></span><br><span class="line">  uint64 kstack;               <span class="comment">// Virtual address of kernel stack</span></span><br><span class="line">  uint64 sz;                   <span class="comment">// Size of process memory (bytes)</span></span><br><span class="line">  <span class="keyword">pagetable_t</span> pagetable;       <span class="comment">// User page table</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> *<span class="title">trapframe</span>;</span> <span class="comment">// data page for trampoline.S</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">context</span> <span class="title">context</span>;</span>      <span class="comment">// swtch() here to run process</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">ofile</span>[<span class="title">NOFILE</span>];</span>  <span class="comment">// Open files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">cwd</span>;</span>           <span class="comment">// Current directory</span></span><br><span class="line">  <span class="keyword">char</span> name[<span class="number">16</span>];               <span class="comment">// Process name (debugging)</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Lab4 Task3</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> *<span class="title">alarm_trapframe</span>;</span> <span class="comment">// trapframe for saving and restoring registers in sys_sigalarm and sys_sigreturn.</span></span><br><span class="line">  <span class="keyword">int</span> set_alarm;               <span class="comment">// process is setted alarm.</span></span><br><span class="line">  uint tick;                   <span class="comment">// alarm start tick.</span></span><br><span class="line">  uint alarm_interval;</span><br><span class="line">  <span class="keyword">void</span> (*handler)(<span class="keyword">void</span>);       <span class="comment">// alarm handler.</span></span><br><span class="line">  <span class="keyword">int</span> handler_running;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>sysproc.c</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Lab4 Task3</span></span><br><span class="line"><span class="comment"> * Alarm system call.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_sigalarm</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> interval;</span><br><span class="line">  uint64 handler;</span><br><span class="line">  <span class="keyword">if</span> (argint(<span class="number">0</span>, &amp;interval) &lt; <span class="number">0</span>) </span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span> (argaddr(<span class="number">1</span>, &amp;handler) &lt; <span class="number">0</span>) </span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  <span class="comment">// interval is 0 and handler is null pointer, </span></span><br><span class="line">  <span class="comment">// stop generate alarm.</span></span><br><span class="line">  <span class="keyword">if</span> (interval == <span class="number">0</span> &amp;&amp; handler == <span class="number">0</span>) &#123;</span><br><span class="line">    p-&gt;set_alarm = <span class="number">0</span>;</span><br><span class="line">    p-&gt;tick = <span class="number">0</span>;</span><br><span class="line">    p-&gt;alarm_interval = <span class="number">0</span>;</span><br><span class="line">    p-&gt;handler = <span class="number">0</span>;</span><br><span class="line">    p-&gt;handler_running = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// initialize relative fields in current process.</span></span><br><span class="line">  p-&gt;set_alarm = <span class="number">1</span>;</span><br><span class="line">  p-&gt;tick = <span class="number">0</span>;</span><br><span class="line">  p-&gt;alarm_interval = interval;</span><br><span class="line">  p-&gt;handler = (<span class="keyword">void</span> *) handler;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Lab4 Task3</span></span><br><span class="line"><span class="comment"> * Alarm system call return.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_sigreturn</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  <span class="comment">// restore trapframe from alarm trapframe.</span></span><br><span class="line">  memmove(p-&gt;trapframe, p-&gt;alarm_trapframe, <span class="keyword">sizeof</span>(struct trapframe));</span><br><span class="line">  p-&gt;tick = <span class="number">0</span>;</span><br><span class="line">  p-&gt;handler_running = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>usertrap</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// handle an interrupt, exception, or system call from user space.</span></span><br><span class="line"><span class="comment">// called from trampoline.S</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">usertrap</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> which_dev = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((r_sstatus() &amp; SSTATUS_SPP) != <span class="number">0</span>)</span><br><span class="line">    panic(<span class="string">&quot;usertrap: not from user mode&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send interrupts and exceptions to kerneltrap(),</span></span><br><span class="line">  <span class="comment">// since we&#x27;re now in the kernel.</span></span><br><span class="line">  w_stvec((uint64)kernelvec);</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// save user program counter.</span></span><br><span class="line">  p-&gt;trapframe-&gt;epc = r_sepc();</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(r_scause() == <span class="number">8</span>)&#123;</span><br><span class="line">    <span class="comment">// system call</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(p-&gt;killed)</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sepc points to the ecall instruction,</span></span><br><span class="line">    <span class="comment">// but we want to return to the next instruction.</span></span><br><span class="line">    p-&gt;trapframe-&gt;epc += <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// an interrupt will change sstatus &amp;c registers,</span></span><br><span class="line">    <span class="comment">// so don&#x27;t enable until done with those registers.</span></span><br><span class="line">    intr_on();</span><br><span class="line"></span><br><span class="line">    syscall();</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span>((which_dev = devintr()) != <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="comment">// ok</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;usertrap(): unexpected scause %p pid=%d\n&quot;</span>, r_scause(), p-&gt;pid);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;            sepc=%p stval=%p\n&quot;</span>, r_sepc(), r_stval());</span><br><span class="line">    p-&gt;killed = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(p-&gt;killed)</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// give up the CPU if this is a timer interrupt.</span></span><br><span class="line">  <span class="keyword">if</span>(which_dev == <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="comment">// Lab4 Task3</span></span><br><span class="line">    <span class="comment">// if alarm is active.</span></span><br><span class="line">    yield();</span><br><span class="line">    <span class="keyword">if</span> (p-&gt;set_alarm &amp;&amp; !p-&gt;handler_running) &#123;</span><br><span class="line">      p-&gt;tick += <span class="number">1</span>;</span><br><span class="line">      <span class="keyword">if</span> (p-&gt;tick &gt;= p-&gt;alarm_interval) &#123;</span><br><span class="line">        p-&gt;handler_running = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// save original trapframe to alarm_trapframe.</span></span><br><span class="line">        memmove(p-&gt;alarm_trapframe, p-&gt;trapframe, <span class="keyword">sizeof</span>(struct trapframe));</span><br><span class="line">        <span class="comment">// set epc in trapframe equal to user handler.</span></span><br><span class="line">        <span class="comment">// usertrapret and userret will load it as user pc.</span></span><br><span class="line">        p-&gt;trapframe-&gt;epc = (uint64) p-&gt;handler;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  usertrapret();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>make grade的截图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/wzmw-zr/blog-images/lab4-result.png"></p>
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/02/26/MIT6-S081-Lab5-Xv6-lazy-page-allocation/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6.S081 Lab5 Xv6 lazy page allocation</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/02/19/MIT6-S081-Lab3-Page-Table/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6.S081 Lab3 Page Table</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">wzmw-zr</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>

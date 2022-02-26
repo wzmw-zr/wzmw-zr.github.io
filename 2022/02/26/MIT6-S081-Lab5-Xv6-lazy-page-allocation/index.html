@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="wzmw-zr">
+    
+    <title>
+        
+            MIT6.S081 Lab5 Xv6 lazy page allocation |
+        
+        无字铭文のBlog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                无字铭文のBlog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                CATEGORIES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">CATEGORIES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">MIT6.S081 Lab5 Xv6 lazy page allocation</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">wzmw-zr</span>
+                        
+                            <span class="author-label">Lv2</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-02-26 18:02:47</span>
+        <span class="mobile">2022-02-26 18:02</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Lab5：xv6-lazy-page-allocation"><a href="#Lab5：xv6-lazy-page-allocation" class="headerlink" title="Lab5：xv6 lazy page allocation"></a>Lab5：xv6 lazy page allocation</h1><p>Lab5要求实现懒惰页面分配，即<strong>sbrk时并不真正分配物理页面，在实际使用时再分配（这里的实际使用可以是在发生缺页中断、从用户空间读写内容）</strong>，<strong>懒惰页面分配是一种虚拟内存使用上的优化，避免了不必要的内存申请，加快了速度，Lab6需要实现的copy-on-write fork也是避免不必要内存申请开销的技巧</strong>。</p>
+<p>懒惰页面分配，在sbrk中需要分配页面时，仅仅创建页表项，并在最终的页表项中设置PTE_V标志为0，表示对应的虚拟地址没有映射物理页面，对应地，释放虚拟地址、fork等操作中会遇到合法地址但没有分配页面的情况，这时不报异常。</p>
+<p>需要分配实际页面的情况：</p>
+<ol>
+<li>当进程第一次尝试使用任何懒分配的内存，CPU产生一个page fault，这里内核会分配物理内存，将其清零，然后映射。</li>
+<li><code>read, write</code>等系统调用读写用户空间内容，遇到合法地址但是没有分配物理内存的情况。</li>
+<li><code>copyin, copyout, copyinstr</code>涉及合法用户空间地址但是没有分配物理内存的情况。</li>
+</ol>
+<p>当然，像虚拟地址超出合法地址范围，或者在页表中找不到页表项的情况等也是需要考虑的。</p>
+<h2 id="Task1：从sbrk中消除分配"><a href="#Task1：从sbrk中消除分配" class="headerlink" title="Task1：从sbrk中消除分配"></a>Task1：从sbrk中消除分配</h2><p>第一个任务是从sbrk系统调用的实现中删除页面分配，在<code>sys_sbrk()</code>中。<code>sys_sbrk(n)</code>系统调用将进程的内存增加n字节，然后返回新分配区域的起始地址。你的新<code>sys_sbrk()</code>应当仅仅修改增加进程大小(myproc()-&gt;sz)n个字节，然后返回旧的大小。这里不应当分配内存，因此，需要删除growproc()的调用，不过页表项还是需要增加的，最后将页表项的PTE_V标志置0。</p>
+<blockquote>
+<p>PS: sbrk返回的是在分配或者回收页面前进程的大小<code>struct proc</code>中的<code>sz</code>项，不然后面会过不了<code>usertests</code>中的<code>pgbug</code>测试。</p>
+</blockquote>
+<p>sbrk在n小于0时需要释放内存，是释放内存部分也需要判断该虚拟地址对应的页面是否已经分配，如果没有分配，就不处理，这部分逻辑在<code>uvmunmap</code>中增加，这是Task2中的内容。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_sbrk</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint64 addr;</span><br><span class="line">  <span class="keyword">int</span> n;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">argint</span>(<span class="number">0</span>, &amp;n) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> <span class="built_in">myproc</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Lab5 Task1&amp;2</span></span><br><span class="line">  addr = p-&gt;sz;</span><br><span class="line">  <span class="keyword">if</span> (n &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// unmap freed pages.</span></span><br><span class="line">    uint64 top_va = p-&gt;sz;</span><br><span class="line">    uint64 bottom_va = p-&gt;sz + n;</span><br><span class="line">    top_va = <span class="built_in">PGROUNDUP</span>(top_va);</span><br><span class="line">    bottom_va = <span class="built_in">PGROUNDUP</span>(bottom_va);</span><br><span class="line">    <span class="keyword">if</span> (bottom_va &lt; top_va) </span><br><span class="line">      <span class="built_in">uvmunmap</span>(p-&gt;pagetable, bottom_va, (top_va - bottom_va) / PGSIZE, <span class="number">1</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// Lazy Allocate:</span></span><br><span class="line">    <span class="comment">// create page table entry, but not allocate page.</span></span><br><span class="line">    <span class="keyword">for</span> (uint64 va = <span class="built_in">PGROUNDUP</span>(addr); va &lt; <span class="built_in">PGROUNDUP</span>(p-&gt;sz + n); va += PGSIZE) &#123;</span><br><span class="line">      <span class="keyword">pte_t</span> *pte = <span class="built_in">walk</span>(p-&gt;pagetable, va, <span class="number">1</span>);</span><br><span class="line">      <span class="keyword">if</span> (pte == <span class="number">0</span>) </span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>); <span class="comment">// out of memory, exit, otherwise fail out of memory test in lazytests.</span></span><br><span class="line">      *pte &amp;= ~PTE_V;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  p-&gt;sz += n;</span><br><span class="line">  <span class="keyword">return</span> addr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>顺便贴释放虚拟地址的<code>uvmunmap()</code>:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">uvmunmap</span><span class="params">(<span class="keyword">pagetable_t</span> pagetable, uint64 va, uint64 npages, <span class="keyword">int</span> do_free)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint64 a;</span><br><span class="line">  <span class="keyword">pte_t</span> *pte;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((va % PGSIZE) != <span class="number">0</span>)</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;uvmunmap: not aligned&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(a = va; a &lt; va + npages*PGSIZE; a += PGSIZE)&#123;</span><br><span class="line">    <span class="keyword">if</span>((pte = <span class="built_in">walk</span>(pagetable, a, <span class="number">0</span>)) == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="built_in">panic</span>(<span class="string">&quot;uvmunmap: walk&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span>) <span class="keyword">continue</span>; <span class="comment">// valid address, but page is not allocated.</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">PTE_FLAGS</span>(*pte) == PTE_V)</span><br><span class="line">      <span class="built_in">panic</span>(<span class="string">&quot;uvmunmap: not a leaf&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(do_free)&#123;</span><br><span class="line">      uint64 pa = <span class="built_in">PTE2PA</span>(*pte);</span><br><span class="line">      <span class="built_in">kfree</span>((<span class="keyword">void</span>*)pa);</span><br><span class="line">    &#125;</span><br><span class="line">    *pte = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Task2：Lazy-allocation"><a href="#Task2：Lazy-allocation" class="headerlink" title="Task2：Lazy allocation"></a>Task2：Lazy allocation</h2><p>Task2需要对”访问到合法地址但是还没有分配物理页面”的情况分配物理页面。</p>
+<h3 id="1-页面故障——缺页中断，在usertrap中处理"><a href="#1-页面故障——缺页中断，在usertrap中处理" class="headerlink" title="1. 页面故障——缺页中断，在usertrap中处理"></a>1. 页面故障——缺页中断，在usertrap中处理</h3><p><strong>缺页中断发生的情况：sbrk懒分配了页面（无映射），用户空间程序访问该页面的内容，会引发缺页中断（可以从测试代码中看出来，调用sbrk后获得返回值[指针]，通过指针访问内容，引发缺页中断）</strong>。</p>
+<p>访问的页面不存在，发生缺页中断，在<code>usertrap()</code>中，看<code>r_scause()</code>是13还是15来检查一个故障是否是页面故障，是的话就分配物理内存并添加映射，需要注意虚拟地址超出合法范围、访问到用户栈下的guard page的情况。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// handle an interrupt, exception, or system call from user space.</span></span><br><span class="line"><span class="comment">// called from trampoline.S</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">usertrap</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> which_dev = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((<span class="built_in">r_sstatus</span>() &amp; SSTATUS_SPP) != <span class="number">0</span>)</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;usertrap: not from user mode&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send interrupts and exceptions to kerneltrap(),</span></span><br><span class="line">  <span class="comment">// since we&#x27;re now in the kernel.</span></span><br><span class="line">  <span class="built_in">w_stvec</span>((uint64)kernelvec);</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> <span class="built_in">myproc</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// save user program counter.</span></span><br><span class="line">  p-&gt;trapframe-&gt;epc = <span class="built_in">r_sepc</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">r_scause</span>() == <span class="number">8</span>)&#123;</span><br><span class="line">    <span class="comment">// system call</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(p-&gt;killed)</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sepc points to the ecall instruction,</span></span><br><span class="line">    <span class="comment">// but we want to return to the next instruction.</span></span><br><span class="line">    p-&gt;trapframe-&gt;epc += <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// an interrupt will change sstatus &amp;c registers,</span></span><br><span class="line">    <span class="comment">// so don&#x27;t enable until done with those registers.</span></span><br><span class="line">    <span class="built_in">intr_on</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">syscall</span>();</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span>((which_dev = <span class="built_in">devintr</span>()) != <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="comment">// ok</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// Lab5 Task3</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">r_scause</span>() == <span class="number">13</span> || <span class="built_in">r_scause</span>() == <span class="number">15</span>) &#123;</span><br><span class="line">      <span class="comment">// page fault from user space.</span></span><br><span class="line">      uint64 va = <span class="built_in">r_stval</span>();</span><br><span class="line">      <span class="comment">// virtual address higher than any allocated with sbrk.</span></span><br><span class="line">      <span class="keyword">if</span> (va &gt;= p-&gt;sz) </span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      <span class="comment">// faults on invalid page below user stack (on guard page)</span></span><br><span class="line">      <span class="keyword">if</span> ((va &lt; <span class="built_in">PGROUNDDOWN</span>(p-&gt;trapframe-&gt;sp)) &amp;&amp; </span><br><span class="line">          (va &gt;= (<span class="built_in">PGROUNDDOWN</span>(p-&gt;trapframe-&gt;sp) - PGSIZE))) </span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      va = <span class="built_in">PGROUNDDOWN</span>(va);</span><br><span class="line">      <span class="comment">// allocate physical page.</span></span><br><span class="line">      <span class="keyword">char</span> *pa = (<span class="keyword">char</span> *) <span class="built_in">kalloc</span>();</span><br><span class="line">      <span class="comment">// out of memory.</span></span><br><span class="line">      <span class="keyword">if</span> (pa == <span class="number">0</span>) </span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      <span class="comment">// zero fill page, and map it.</span></span><br><span class="line">      <span class="built_in">memset</span>(pa, <span class="number">0</span>, PGSIZE);</span><br><span class="line">      <span class="built_in">mappages</span>(p-&gt;pagetable, va, PGSIZE, (uint64) pa, PTE_W | PTE_R | PTE_U | PTE_X);</span><br><span class="line">      <span class="built_in">usertrapret</span>();</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;usertrap(): unexpected scause %p pid=%d\n&quot;</span>, <span class="built_in">r_scause</span>(), p-&gt;pid);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;            sepc=%p stval=%p\n&quot;</span>, <span class="built_in">r_sepc</span>(), <span class="built_in">r_stval</span>());</span><br><span class="line">    p-&gt;killed = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(p-&gt;killed)</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// give up the CPU if this is a timer interrupt.</span></span><br><span class="line">  <span class="keyword">if</span>(which_dev == <span class="number">2</span>)</span><br><span class="line">    <span class="built_in">yield</span>();</span><br><span class="line"></span><br><span class="line">  <span class="built_in">usertrapret</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-read，write-fstat-pipe等需要读写用户空间内容的系统调用及copyin-copyinstr-copyout"><a href="#2-read，write-fstat-pipe等需要读写用户空间内容的系统调用及copyin-copyinstr-copyout" class="headerlink" title="2. read，write, fstat, pipe等需要读写用户空间内容的系统调用及copyin, copyinstr, copyout"></a>2. read，write, fstat, pipe等需要读写用户空间内容的系统调用及copyin, copyinstr, copyout</h3><p>这些系统调用会传入用户空间的地址，读取或写入内容，这部分不会发生中断，所以需要手动控制，判断地址是否合法，判断页面是否分配，没有分配则分配页面等等。</p>
+<p>此外，系统调用还会使用通过copyin、copyinstr, copyout读取传递的指针参数，这也会访问到用户空间地址，也需要判断地址是否合法，判断页面是否分配，没有分配则分配页面等等。</p>
+<p><code>sysfile.c</code>中部分代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_read</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">f</span>;</span></span><br><span class="line">  <span class="keyword">int</span> n;</span><br><span class="line">  uint64 p;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">argfd</span>(<span class="number">0</span>, <span class="number">0</span>, &amp;f) &lt; <span class="number">0</span> || <span class="built_in">argint</span>(<span class="number">2</span>, &amp;n) &lt; <span class="number">0</span> || <span class="built_in">argaddr</span>(<span class="number">1</span>, &amp;p) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">// Lab5 Task3</span></span><br><span class="line">  <span class="comment">// memory lazy allocation.</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">proc</span> =</span> <span class="built_in">myproc</span>();</span><br><span class="line">  <span class="comment">// read bytes should ge 0.</span></span><br><span class="line">  <span class="keyword">if</span> (n &lt; <span class="number">0</span>) </span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">// read virtual address exceed upper bound.</span></span><br><span class="line">  <span class="keyword">if</span> (p + (uint64) n &gt; proc-&gt;sz) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  uint64 va = <span class="built_in">PGROUNDDOWN</span>(p);</span><br><span class="line">  <span class="comment">// allocate physical page.</span></span><br><span class="line">  <span class="keyword">while</span> (va &lt; p + (uint64) n) &#123;</span><br><span class="line">    <span class="keyword">pte_t</span> *pte = <span class="built_in">walk</span>(proc-&gt;pagetable, va, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (pte == <span class="number">0</span>) </span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (!(*pte &amp; PTE_V)) &#123;</span><br><span class="line">      <span class="keyword">char</span> *pa = <span class="built_in">kalloc</span>();</span><br><span class="line">      <span class="keyword">if</span> (pa == <span class="number">0</span>) </span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      <span class="built_in">mappages</span>(proc-&gt;pagetable, va, PGSIZE, (uint64) pa, PTE_U | PTE_R | PTE_W | PTE_X);</span><br><span class="line">    &#125;</span><br><span class="line">    va += PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">fileread</span>(f, p, n);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_write</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">f</span>;</span></span><br><span class="line">  <span class="keyword">int</span> n;</span><br><span class="line">  uint64 p;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">argfd</span>(<span class="number">0</span>, <span class="number">0</span>, &amp;f) &lt; <span class="number">0</span> || <span class="built_in">argint</span>(<span class="number">2</span>, &amp;n) &lt; <span class="number">0</span> || <span class="built_in">argaddr</span>(<span class="number">1</span>, &amp;p) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">// Lab5 Task3</span></span><br><span class="line">  <span class="comment">// memory lazy allocation.</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">proc</span> =</span> <span class="built_in">myproc</span>();</span><br><span class="line">  <span class="comment">// write bytes should ge 0.</span></span><br><span class="line">  <span class="keyword">if</span> (n &lt; <span class="number">0</span>) </span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">// will write virtual address exceed current bounder.</span></span><br><span class="line">  <span class="keyword">if</span> (p + (uint64) n &gt; proc-&gt;sz) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  uint64 va = <span class="built_in">PGROUNDDOWN</span>(p);</span><br><span class="line">  <span class="comment">// allocate physical page.</span></span><br><span class="line">  <span class="keyword">while</span> (va &lt; p + (uint64) n) &#123;</span><br><span class="line">    <span class="keyword">pte_t</span> *pte = <span class="built_in">walk</span>(proc-&gt;pagetable, va, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (pte == <span class="number">0</span>) </span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (!(*pte &amp; PTE_V)) &#123;</span><br><span class="line">      <span class="keyword">char</span> *pa = <span class="built_in">kalloc</span>();</span><br><span class="line">      <span class="keyword">if</span> (pa == <span class="number">0</span>) </span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      <span class="built_in">mappages</span>(proc-&gt;pagetable, va, PGSIZE, (uint64) pa, PTE_U | PTE_R | PTE_W | PTE_X);</span><br><span class="line">    &#125;</span><br><span class="line">    va += PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">filewrite</span>(f, p, n);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_fstat</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">f</span>;</span></span><br><span class="line">  uint64 st; <span class="comment">// user pointer to struct stat</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">argfd</span>(<span class="number">0</span>, <span class="number">0</span>, &amp;f) &lt; <span class="number">0</span> || <span class="built_in">argaddr</span>(<span class="number">1</span>, &amp;st) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Lab5 Task3</span></span><br><span class="line">  <span class="comment">// lazy allocation.</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> <span class="built_in">myproc</span>();</span><br><span class="line">  <span class="comment">// access invalid virtual address.</span></span><br><span class="line">  <span class="keyword">if</span> (st + <span class="built_in"><span class="keyword">sizeof</span></span>(struct stat) &gt; p-&gt;sz) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  uint64 va = <span class="built_in">PGROUNDDOWN</span>(st);</span><br><span class="line">  <span class="comment">// allocate physical page.</span></span><br><span class="line">  <span class="keyword">while</span> (va &lt; st + <span class="built_in"><span class="keyword">sizeof</span></span>(struct stat)) &#123;</span><br><span class="line">    <span class="keyword">pte_t</span> *pte = <span class="built_in">walk</span>(p-&gt;pagetable, va, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (pte == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (!(*pte &amp; PTE_V)) &#123;</span><br><span class="line">      <span class="keyword">char</span> *pa = <span class="built_in">kalloc</span>();</span><br><span class="line">      <span class="keyword">if</span> (pa == <span class="number">0</span>) </span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      <span class="built_in">mappages</span>(p-&gt;pagetable, va, PGSIZE, st, PTE_U | PTE_R | PTE_W | PTE_X);</span><br><span class="line">    &#125;</span><br><span class="line">    va += PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">filestat</span>(f, st);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_pipe</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint64 fdarray; <span class="comment">// user pointer to array of two integers</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">rf</span>, *<span class="title">wf</span>;</span></span><br><span class="line">  <span class="keyword">int</span> fd0, fd1;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> <span class="built_in">myproc</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">argaddr</span>(<span class="number">0</span>, &amp;fdarray) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// access invalid virtual address.</span></span><br><span class="line">  <span class="comment">// it&#x27;s better not to put under `pipealloc`,</span></span><br><span class="line">  <span class="comment">// for `pipealloc` will allocate page which may cannot be freed.</span></span><br><span class="line">  <span class="keyword">if</span> (fdarray + <span class="number">2</span> * <span class="built_in"><span class="keyword">sizeof</span></span>(<span class="keyword">int</span>) &gt; p-&gt;sz) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">pipealloc</span>(&amp;rf, &amp;wf) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Lab5 Task3</span></span><br><span class="line">  <span class="comment">// lazy allocation: virtual address of array of two integers.</span></span><br><span class="line">  uint64 va = <span class="built_in">PGROUNDDOWN</span>(fdarray);</span><br><span class="line">  <span class="keyword">while</span> (va &lt; fdarray + <span class="number">2</span> * <span class="built_in"><span class="keyword">sizeof</span></span>(<span class="keyword">int</span>)) &#123;</span><br><span class="line">    <span class="keyword">pte_t</span> *pte = <span class="built_in">walk</span>(p-&gt;pagetable, va, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (pte == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span> (!(*pte &amp; PTE_V)) &#123;</span><br><span class="line">      <span class="keyword">char</span> *pa = <span class="built_in">kalloc</span>();</span><br><span class="line">      <span class="keyword">if</span> (pa == <span class="number">0</span>) </span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">      <span class="built_in">mappages</span>(p-&gt;pagetable, va, PGSIZE, (uint64) pa, PTE_U | PTE_R | PTE_W | PTE_X | PTE_V);</span><br><span class="line">    &#125;</span><br><span class="line">    va += PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  fd0 = <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span>((fd0 = <span class="built_in">fdalloc</span>(rf)) &lt; <span class="number">0</span> || (fd1 = <span class="built_in">fdalloc</span>(wf)) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(fd0 &gt;= <span class="number">0</span>)</span><br><span class="line">      p-&gt;ofile[fd0] = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">fileclose</span>(rf);</span><br><span class="line">    <span class="built_in">fileclose</span>(wf);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">copyout</span>(p-&gt;pagetable, fdarray, (<span class="keyword">char</span>*)&amp;fd0, <span class="built_in"><span class="keyword">sizeof</span></span>(fd0)) &lt; <span class="number">0</span> ||</span><br><span class="line">     <span class="built_in">copyout</span>(p-&gt;pagetable, fdarray+<span class="built_in"><span class="keyword">sizeof</span></span>(fd0), (<span class="keyword">char</span> *)&amp;fd1, <span class="built_in"><span class="keyword">sizeof</span></span>(fd1)) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    p-&gt;ofile[fd0] = <span class="number">0</span>;</span><br><span class="line">    p-&gt;ofile[fd1] = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">fileclose</span>(rf);</span><br><span class="line">    <span class="built_in">fileclose</span>(wf);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在usertest中，具体哪个测试我忘了，应该是sbrkarg，会报freewalk有叶子没释放，在DEBUG时发现，pipe也会传入非法的地址，还有pgbug测试报了有有页面没释放的错误，DEBUG时发现sys_pipe中调用的allocpipe会申请新页面，所以判断传入地址是否合法得提前，否则该页面来不及释放（当然，不提前而及时释放也可以，不过这个我DEBUG了很长时间。。。）</p>
+<p><code>vm.c</code>中copyin, copystr, copyout等代码保持不变，只需要在walkaddr中增加对应的代码即可：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">walkaddr</span><span class="params">(<span class="keyword">pagetable_t</span> pagetable, uint64 va)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">pte_t</span> *pte;</span><br><span class="line">  uint64 pa;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(va &gt;= MAXVA)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  pte = <span class="built_in">walk</span>(pagetable, va, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span>(pte == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// Lab5 Task3</span></span><br><span class="line">  <span class="comment">// lazy allocation.</span></span><br><span class="line">  <span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">char</span> *ph = <span class="built_in">kalloc</span>();</span><br><span class="line">    <span class="keyword">if</span> (ph == <span class="number">0</span>) </span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    *pte = <span class="built_in">PA2PTE</span>((uint64) ph) | PTE_V | PTE_U | PTE_X | PTE_R | PTE_W;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>((*pte &amp; PTE_U) == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  pa = <span class="built_in">PTE2PA</span>(*pte);</span><br><span class="line">  <span class="keyword">return</span> pa;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Task3：Laytests-and-Usertests"><a href="#Task3：Laytests-and-Usertests" class="headerlink" title="Task3：Laytests and Usertests"></a>Task3：Laytests and Usertests</h2><p>上面干的差不多了，这里完成fork中子进程对父进程页表的拷贝，如果父进程页表中的页表项没有分配物理页面，子进程页表中页表项也不用分配物理页面（但是页表项得分配），如果父进程页表中的页表项分配物理页面，子进程页表中页表项也分配物理页面。因为这个操作使用<code>uvmcopy</code>，所以修改<code>uvmcopy</code>即可。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span></span></span><br><span class="line"><span class="function"><span class="title">uvmcopy</span><span class="params">(<span class="keyword">pagetable_t</span> old, <span class="keyword">pagetable_t</span> <span class="keyword">new</span>, uint64 sz)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">pte_t</span> *pte;</span><br><span class="line">  uint64 pa, i;</span><br><span class="line">  uint flags;</span><br><span class="line">  <span class="keyword">char</span> *mem;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; sz; i += PGSIZE)&#123;</span><br><span class="line">    <span class="keyword">if</span>((pte = <span class="built_in">walk</span>(old, i, <span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">      <span class="built_in">panic</span>(<span class="string">&quot;uvmcopy: pte should exist&quot;</span>);</span><br><span class="line">    <span class="comment">// old page is not mapped, </span></span><br><span class="line">    <span class="comment">// still need to create page table entry in new pagetable.</span></span><br><span class="line">    <span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">pte_t</span> *n_pte = <span class="built_in">walk</span>(<span class="keyword">new</span>, i, <span class="number">1</span>);</span><br><span class="line">      *n_pte = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    pa = <span class="built_in">PTE2PA</span>(*pte);</span><br><span class="line">    flags = <span class="built_in">PTE_FLAGS</span>(*pte);</span><br><span class="line">    <span class="keyword">if</span>((mem = <span class="built_in">kalloc</span>()) == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">goto</span> err;</span><br><span class="line">    <span class="built_in">memmove</span>(mem, (<span class="keyword">char</span>*)pa, PGSIZE);</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">mappages</span>(<span class="keyword">new</span>, i, PGSIZE, (uint64)mem, flags) != <span class="number">0</span>)&#123;</span><br><span class="line">      <span class="built_in">kfree</span>(mem);</span><br><span class="line">      <span class="keyword">goto</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"> err:</span><br><span class="line">  <span class="built_in">uvmunmap</span>(<span class="keyword">new</span>, <span class="number">0</span>, i / PGSIZE, <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>make grade的截图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/wzmw-zr/blog-images/lab5-result.png"></p>
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/02/26/MIT6-S081-Lab6-Copy-on-Write-Fork/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6.S081 Lab6 Copy-on-Write Fork</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/02/26/MIT6-S081-Lab4-Traps/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6.S081 Lab4 Traps</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">wzmw-zr</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
