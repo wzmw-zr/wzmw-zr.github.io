@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="wzmw-zr">
+    
+    <title>
+        
+            MIT6-S081-Lab7-Multithreading |
+        
+        无字铭文のBlog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                无字铭文のBlog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                CATEGORIES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">CATEGORIES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">MIT6-S081-Lab7-Multithreading</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">wzmw-zr</span>
+                        
+                            <span class="author-label">Lv2</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-03-28 14:59:34</span>
+        <span class="mobile">2022-03-28 14:59</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Lab7-Multithreading"><a href="#Lab7-Multithreading" class="headerlink" title="Lab7: Multithreading"></a>Lab7: Multithreading</h1><p>Lab7要求实现用户态线程的切换，使用多线程加速程序，并实现一个barrier。</p>
+<blockquote>
+<p>个人的收获：</p>
+<ol>
+<li>在实现用户态线程的创建与切换时，理解了<strong>线程创建的细节（设置线程的上下文，栈，主要是上下文中设置ra为线程需要执行的函数地址）</strong>，以及线程切换的细节（上下文切换）。</li>
+<li>实现barrier时，理解了<strong>条件变量与互斥量配合使用的方式</strong>以及细节（<strong>条件变量wait时会自动释放互斥量，唤醒时会自动获得互斥量，因此最后还是需要手动释放互斥量</strong>）。</li>
+</ol>
+</blockquote>
+<h2 id="Task-1-Uthread-switching-between-threads"><a href="#Task-1-Uthread-switching-between-threads" class="headerlink" title="Task 1: Uthread: switching between threads"></a>Task 1: Uthread: switching between threads</h2><p>实现用户态线程的创建与切换。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> </span></span><br><span class="line"><span class="function"><span class="title">thread_schedule</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">thread</span> *<span class="title">t</span>, *<span class="title">next_thread</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Find another runnable thread. */</span></span><br><span class="line">  next_thread = <span class="number">0</span>;</span><br><span class="line">  t = current_thread + <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; MAX_THREAD; i++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(t &gt;= all_thread + MAX_THREAD)</span><br><span class="line">      t = all_thread;</span><br><span class="line">    <span class="keyword">if</span>(t-&gt;state == RUNNABLE) &#123;</span><br><span class="line">      next_thread = t;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    t = t + <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (next_thread == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;thread_schedule: no runnable threads\n&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (current_thread != next_thread) &#123;         <span class="comment">/* switch threads?  */</span></span><br><span class="line">    next_thread-&gt;state = RUNNING;</span><br><span class="line">    t = current_thread;</span><br><span class="line">    current_thread = next_thread;</span><br><span class="line">    <span class="comment">/* YOUR CODE HERE</span></span><br><span class="line"><span class="comment">     * Invoke thread_switch to switch from t to next_thread:</span></span><br><span class="line"><span class="comment">     * thread_switch(??, ??);</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    thread_switch((uint64) &amp;(t-&gt;ctxt), (uint64) &amp;(next_thread-&gt;ctxt));</span><br><span class="line">  &#125; <span class="keyword">else</span></span><br><span class="line">    next_thread = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> </span></span><br><span class="line"><span class="function"><span class="title">thread_create</span><span class="params">(<span class="keyword">void</span> (*func)())</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">thread</span> *<span class="title">t</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (t = all_thread; t &lt; all_thread + MAX_THREAD; t++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (t-&gt;state == FREE) <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  t-&gt;state = RUNNABLE;</span><br><span class="line">  <span class="comment">// YOUR CODE HERE</span></span><br><span class="line">  (t-&gt;ctxt).ra = (uint64) func; <span class="comment">// set ra the address of func, first schedule will return to ra, and execute func.</span></span><br><span class="line">  (t-&gt;ctxt).sp = (uint64) t-&gt;<span class="built_in">stack</span> + STACK_SIZE - <span class="number">1</span>; <span class="comment">// initialize thread&#x27;s stack.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用户态线程的上下文切换：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">        .text</span><br><span class="line"></span><br><span class="line">        /*</span><br><span class="line">         * save the old thread&#x27;s registers,</span><br><span class="line">         * restore the new thread&#x27;s registers.</span><br><span class="line">         */</span><br><span class="line"></span><br><span class="line">        .globl thread_switch</span><br><span class="line">thread_switch:</span><br><span class="line">        /* YOUR CODE HERE */</span><br><span class="line">        sd ra, 0(a0)</span><br><span class="line">        sd sp, 8(a0)</span><br><span class="line">        sd s0, 16(a0)</span><br><span class="line">        sd s1, 24(a0)</span><br><span class="line">        sd s2, 32(a0)</span><br><span class="line">        sd s3, 40(a0)</span><br><span class="line">        sd s4, 48(a0)</span><br><span class="line">        sd s5, 56(a0)</span><br><span class="line">        sd s6, 64(a0)</span><br><span class="line">        sd s7, 72(a0)</span><br><span class="line">        sd s8, 80(a0)</span><br><span class="line">        sd s9, 88(a0)</span><br><span class="line">        sd s10, 96(a0)</span><br><span class="line">        sd s11, 104(a0)</span><br><span class="line"></span><br><span class="line">        ld ra, 0(a1)</span><br><span class="line">        ld sp, 8(a1)</span><br><span class="line">        ld s0, 16(a1)</span><br><span class="line">        ld s1, 24(a1)</span><br><span class="line">        ld s2, 32(a1)</span><br><span class="line">        ld s3, 40(a1)</span><br><span class="line">        ld s4, 48(a1)</span><br><span class="line">        ld s5, 56(a1)</span><br><span class="line">        ld s6, 64(a1)</span><br><span class="line">        ld s7, 72(a1)</span><br><span class="line">        ld s8, 80(a1)</span><br><span class="line">        ld s9, 88(a1)</span><br><span class="line">        ld s10, 96(a1)</span><br><span class="line">        ld s11, 104(a1)</span><br><span class="line"></span><br><span class="line">        ret    /* return to ra */</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Task-2-Using-threads"><a href="#Task-2-Using-threads" class="headerlink" title="Task 2: Using threads"></a>Task 2: Using threads</h2><p>在notxv6/ph.c中为哈希表增加对并发的支持，因为实验还要求了提速，全局加锁是不行的，所以需要加细粒度的锁，给哈希表的每个bucket加锁即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pthread_mutex_t</span> locks[NBUCKET];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> </span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">put</span><span class="params">(<span class="keyword">int</span> key, <span class="keyword">int</span> value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i = key % NBUCKET;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// is the key already present?</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">entry</span> *<span class="title">e</span> =</span> <span class="number">0</span>;</span><br><span class="line">  pthread_mutex_lock(&amp;locks[i]);</span><br><span class="line">  <span class="keyword">for</span> (e = table[i]; e != <span class="number">0</span>; e = e-&gt;next) &#123;</span><br><span class="line">    <span class="keyword">if</span> (e-&gt;key == key)</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(e)&#123;</span><br><span class="line">    <span class="comment">// update the existing key.</span></span><br><span class="line">    e-&gt;value = value;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// the new is new.</span></span><br><span class="line">    insert(key, value, &amp;table[i], table[i]);</span><br><span class="line">  &#125;</span><br><span class="line">  pthread_mutex_unlock(&amp;locks[i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> struct entry*</span></span><br><span class="line"><span class="function"><span class="title">get</span><span class="params">(<span class="keyword">int</span> key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i = key % NBUCKET;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">entry</span> *<span class="title">e</span> =</span> <span class="number">0</span>;</span><br><span class="line">  pthread_mutex_lock(&amp;locks[i]);</span><br><span class="line">  <span class="keyword">for</span> (e = table[i]; e != <span class="number">0</span>; e = e-&gt;next) &#123;</span><br><span class="line">    <span class="keyword">if</span> (e-&gt;key == key) <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  pthread_mutex_unlock(&amp;locks[i]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> e;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span></span></span><br><span class="line"><span class="function"><span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; NBUCKET; i++) </span><br><span class="line">    pthread_mutex_init(&amp;locks[i], <span class="literal">NULL</span>);</span><br><span class="line">	/ ***** rest code ****/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Task-3-Barrier"><a href="#Task-3-Barrier" class="headerlink" title="Task 3: Barrier"></a>Task 3: Barrier</h2><p>实现barrier，在一个应用中，所有线程需要等待，直到其他线程都达到一个任务点。这部分的目的是让学生熟悉条件变量的应用。</p>
+<p>思路很简单：如果当前线程达到任务点，但是有线程还没有达到，就在条件变量上等待，否则，释放互斥量并唤醒在条件变量上等待的线程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> </span></span><br><span class="line"><span class="function"><span class="title">barrier</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// YOUR CODE HERE</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// Block until all threads have called barrier() and</span></span><br><span class="line">  <span class="comment">// then increment bstate.round.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  pthread_mutex_lock(&amp;bstate.barrier_mutex);</span><br><span class="line">  bstate.nthread++;</span><br><span class="line">  <span class="keyword">int</span> curr_round = bstate.round;</span><br><span class="line">  <span class="keyword">if</span> (bstate.nthread == nthread) &#123;</span><br><span class="line">    bstate.nthread = <span class="number">0</span>;</span><br><span class="line">    bstate.round++;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> (curr_round == bstate.round) &#123;</span><br><span class="line">    pthread_cond_wait(&amp;bstate.barrier_cond, &amp;bstate.barrier_mutex);</span><br><span class="line">  &#125;</span><br><span class="line">  pthread_mutex_unlock(&amp;bstate.barrier_mutex);</span><br><span class="line">  pthread_cond_broadcast(&amp;bstate.barrier_cond);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/03/28/MIT6-S081-Lab8-Locks/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6-S081-Lab8-Locks</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/02/26/MIT6-S081-Lab6-Copy-on-Write-Fork/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6.S081 Lab6 Copy-on-Write Fork</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">wzmw-zr</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
