@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="wzmw-zr">
+    
+    <title>
+        
+            MIT6-S081-Lab9-File-System |
+        
+        无字铭文のBlog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                无字铭文のBlog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                CATEGORIES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">CATEGORIES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">MIT6-S081-Lab9-File-System</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">wzmw-zr</span>
+                        
+                            <span class="author-label">Lv2</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-03-31 19:45:57</span>
+        <span class="mobile">2022-03-31 19:45</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Lab-9-File-System"><a href="#Lab-9-File-System" class="headerlink" title="Lab 9 File System"></a>Lab 9 File System</h1><p>Lab 9要求为xv6增加大文件和符号链接的支持。</p>
+<p>个人做完之后的收获：</p>
+<ol>
+<li><p>通过阅读材料和文件系统部分的代码，理解了xv6使用的文件系统对磁盘的划分。</p>
+<blockquote>
+<p>| boot | superblock | log | inode | bitmap | data |</p>
+<p>|    0    |          1          |  …  |     …    |       …     |    …   |  </p>
+<p>可以理解与xv6使用的文件系统类似的<strong>文件系统文件数量的最大限制，取决于inode部分能够存储多少inode，这与inode部分的大小，inode的结构大小相关</strong>。</p>
+<p><strong>通过inode结构，可以理解文件读/写数据时的访问方式（directly, singly-indirect, doubly-indirect），以及单个文件能够存储的数据量</strong>。</p>
+</blockquote>
+</li>
+<li><p>理解了inode的结构，以及inode中数据的directly, singly-indirect, doubly-indirect的访问方式。</p>
+</li>
+<li><p>通过实现符号链接理解了符号链接的工作原理。</p>
+</li>
+</ol>
+<h2 id="Task-1-Large-files"><a href="#Task-1-Large-files" class="headerlink" title="Task 1: Large files"></a>Task 1: Large files</h2><p>xv6目前文件的大小限制在268个block（12 + 256），即12个直接存储的block numbers，和1个singly-indirect的block number（该block存储的是block number）。可以减少1个直接存储的block number，增加一个doubly-indirect的block number，<strong>修改<code>kernel/fs.h</code>中的NDIRECT宏为11、MAXFILE的宏为<code>NDIRECT + NINDIRECT + NINDIRECT * NINDIRECT</code>，以及<code>struct inode, struct dinode</code>定义中的addrs长度为NDIRECT + 2</strong>。</p>
+<p>然后就是修改<code>kernel/fs.c</code>中的bmap函数和itrunc函数，增加对doubly-indirect block的支持即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Inode content</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// The content (data) associated with each inode is stored</span></span><br><span class="line"><span class="comment">// in blocks on the disk. The first NDIRECT block numbers</span></span><br><span class="line"><span class="comment">// are listed in ip-&gt;addrs[].  The next NINDIRECT blocks are</span></span><br><span class="line"><span class="comment">// listed in block ip-&gt;addrs[NDIRECT].</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Return the disk block address of the nth block in inode ip.</span></span><br><span class="line"><span class="comment">// If there is no such block, bmap allocates one.</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> uint</span></span><br><span class="line"><span class="function"><span class="title">bmap</span><span class="params">(struct inode *ip, uint bn)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint addr, *a;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">bp</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(bn &lt; NDIRECT)&#123;</span><br><span class="line">    <span class="keyword">if</span>((addr = ip-&gt;addrs[bn]) == <span class="number">0</span>)</span><br><span class="line">      ip-&gt;addrs[bn] = addr = balloc(ip-&gt;dev);</span><br><span class="line">    <span class="keyword">return</span> addr;</span><br><span class="line">  &#125;</span><br><span class="line">  bn -= NDIRECT;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// printf(&quot;single-indrect bn = %d\n&quot;, bn);</span></span><br><span class="line">  <span class="keyword">if</span>(bn &lt; NINDIRECT)&#123;</span><br><span class="line">    <span class="comment">// Load indirect block, allocating if necessary.</span></span><br><span class="line">    <span class="keyword">if</span>((addr = ip-&gt;addrs[NDIRECT]) == <span class="number">0</span>)</span><br><span class="line">      ip-&gt;addrs[NDIRECT] = addr = balloc(ip-&gt;dev);</span><br><span class="line">    bp = bread(ip-&gt;dev, addr);</span><br><span class="line">    a = (uint*)bp-&gt;data;</span><br><span class="line">    <span class="keyword">if</span>((addr = a[bn]) == <span class="number">0</span>)&#123;</span><br><span class="line">      a[bn] = addr = balloc(ip-&gt;dev);</span><br><span class="line">      log_write(bp);</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    <span class="keyword">return</span> addr;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Lab 9 Task 1</span></span><br><span class="line">  bn -= NINDIRECT;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (bn &lt; NINDIRECT * NINDIRECT) &#123;</span><br><span class="line">    <span class="comment">// load double-indirect block, allocate if necessary.</span></span><br><span class="line">    <span class="keyword">if</span> ((addr = ip-&gt;addrs[NDIRECT + <span class="number">1</span>]) == <span class="number">0</span>) </span><br><span class="line">      ip-&gt;addrs[NDIRECT + <span class="number">1</span>] = addr = balloc(ip-&gt;dev);</span><br><span class="line">    bp = bread(ip-&gt;dev, addr);</span><br><span class="line">    a = (uint *) bp-&gt;data;</span><br><span class="line"></span><br><span class="line">    uint ind = bn / NINDIRECT; <span class="comment">// single-indirect block index.</span></span><br><span class="line">    uint res = bn % NINDIRECT; <span class="comment">// direct block index.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// load single-indirect block, allocate if necessary.</span></span><br><span class="line">    <span class="keyword">if</span> ((addr = a[ind]) == <span class="number">0</span>) &#123;</span><br><span class="line">      a[ind] = addr = balloc(ip-&gt;dev);</span><br><span class="line">      log_write(bp);</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    bp = bread(ip-&gt;dev, addr);</span><br><span class="line">    a = (uint *) bp-&gt;data;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// get direct block, allocate if necessary.</span></span><br><span class="line">    <span class="keyword">if</span> ((addr = a[res]) == <span class="number">0</span>) &#123;</span><br><span class="line">      a[res] = addr = balloc(ip-&gt;dev);</span><br><span class="line">      log_write(bp);</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    <span class="keyword">return</span> addr;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  panic(<span class="string">&quot;bmap: out of range&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Truncate inode (discard contents).</span></span><br><span class="line"><span class="comment">// Caller must hold ip-&gt;lock.</span></span><br><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">itrunc</span><span class="params">(struct inode *ip)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i, j;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">bp</span>, *<span class="title">bp_2</span>;</span></span><br><span class="line">  uint *a, *b;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; NDIRECT; i++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(ip-&gt;addrs[i])&#123;</span><br><span class="line">      bfree(ip-&gt;dev, ip-&gt;addrs[i]);</span><br><span class="line">      ip-&gt;addrs[i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(ip-&gt;addrs[NDIRECT])&#123;</span><br><span class="line">    bp = bread(ip-&gt;dev, ip-&gt;addrs[NDIRECT]);</span><br><span class="line">    a = (uint*)bp-&gt;data;</span><br><span class="line">    <span class="keyword">for</span>(j = <span class="number">0</span>; j &lt; NINDIRECT; j++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(a[j])</span><br><span class="line">        bfree(ip-&gt;dev, a[j]);</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    bfree(ip-&gt;dev, ip-&gt;addrs[NDIRECT]);</span><br><span class="line">    ip-&gt;addrs[NDIRECT] = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Lab 9 Task 1</span></span><br><span class="line">  <span class="keyword">if</span> (ip-&gt;addrs[NDIRECT + <span class="number">1</span>]) &#123;</span><br><span class="line">    bp = bread(ip-&gt;dev, ip-&gt;addrs[NDIRECT + <span class="number">1</span>]);</span><br><span class="line">    a = (uint *) bp-&gt;data;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; NINDIRECT; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (a[i]) &#123;</span><br><span class="line">        bp_2 = bread(ip-&gt;dev, a[i]);</span><br><span class="line">        b = (uint *) bp_2-&gt;data;</span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; NINDIRECT; j++) &#123;</span><br><span class="line">          <span class="keyword">if</span> (b[j]) </span><br><span class="line">            bfree(ip-&gt;dev, b[j]);</span><br><span class="line">        &#125;</span><br><span class="line">        brelse(bp_2);</span><br><span class="line">        bfree(ip-&gt;dev, a[i]);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    bfree(ip-&gt;dev, ip-&gt;addrs[NDIRECT + <span class="number">1</span>]);</span><br><span class="line">    ip-&gt;addrs[NDIRECT + <span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ip-&gt;size = <span class="number">0</span>;</span><br><span class="line">  iupdate(ip);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Task-2-Symbolic-links"><a href="#Task-2-Symbolic-links" class="headerlink" title="Task 2: Symbolic links"></a>Task 2: Symbolic links</h2><p>Task 2要求实现符号链接，这里实现的是一个简单版本，符号链接是文件，文件的内容是另一个文件的路径，考虑到测试只使用了绝对路径，所以不考虑相对路径的情况（看了眼linux的符号链接的实现，更加复杂。。。）。</p>
+<p>跟着实验指导：</p>
+<ul>
+<li>增加一个系统调用<code>symlink</code>，过程略。</li>
+<li>在<code>kernel/stat.h</code>中增加<code>T_SYMLINK</code>宏代表文件类型为符号链接。</li>
+<li>在<code>kernel/fcntl.h</code>中增加<code>O_NOFOLLOW</code>宏，在open中使用，如果打开的是符号链接文件，没有使用<code>O_NOFOLLOW</code>宏的话，需要递归找到对应的文件（也要注意出现循环的情况，实验指导给的解决方法是记录递归的层数，超过10层就认为有循环）。</li>
+<li>实现symlink，判断符号链接名字是否已经存在，不存在就创建符号链接文件对应的inode，然后将target写入inode。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_open</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> path[MAXPATH];</span><br><span class="line">  <span class="keyword">int</span> fd, omode;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">f</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">ip</span>;</span></span><br><span class="line">  <span class="keyword">int</span> n;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((n = argstr(<span class="number">0</span>, path, MAXPATH)) &lt; <span class="number">0</span> || argint(<span class="number">1</span>, &amp;omode) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  begin_op();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(omode &amp; O_CREATE)&#123;</span><br><span class="line">    ip = create(path, T_FILE, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(ip == <span class="number">0</span>)&#123;</span><br><span class="line">      end_op();</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> depth = <span class="number">1</span>;</span><br><span class="line"><span class="comment">// Lab 9 Task 2</span></span><br><span class="line">symbolic_entry:</span><br><span class="line">    <span class="keyword">if</span> (depth &gt;= <span class="number">10</span>) &#123;</span><br><span class="line">      end_op();</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>((ip = namei(path)) == <span class="number">0</span>)&#123;</span><br><span class="line">      end_op();</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ilock(ip);</span><br><span class="line">    <span class="keyword">if</span>(ip-&gt;type == T_DIR &amp;&amp; omode != O_RDONLY)&#123;</span><br><span class="line">      iunlockput(ip);</span><br><span class="line">      end_op();</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Lab 9 Task 2</span></span><br><span class="line">    <span class="keyword">if</span> (ip-&gt;type == T_SYMLINK &amp;&amp; (omode &amp; O_NOFOLLOW) == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="comment">// TODO(Me): check whether myproc()-&gt;cwd changed.</span></span><br><span class="line">      <span class="built_in">memset</span>(path, <span class="number">0</span>, MAXPATH);</span><br><span class="line">      <span class="comment">// for (int i = 0; i &lt; MAXPATH; i++) path[i] = 0;</span></span><br><span class="line">      readi(ip, <span class="number">0</span>, (uint64) path, <span class="number">0</span>, ip-&gt;size);</span><br><span class="line">      iunlockput(ip);</span><br><span class="line">      depth++;</span><br><span class="line">      <span class="keyword">goto</span> symbolic_entry;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(ip-&gt;type == T_DEVICE &amp;&amp; (ip-&gt;major &lt; <span class="number">0</span> || ip-&gt;major &gt;= NDEV))&#123;</span><br><span class="line">    iunlockput(ip);</span><br><span class="line">    end_op();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((f = filealloc()) == <span class="number">0</span> || (fd = fdalloc(f)) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(f)</span><br><span class="line">      fileclose(f);</span><br><span class="line">    iunlockput(ip);</span><br><span class="line">    end_op();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(ip-&gt;type == T_DEVICE)&#123;</span><br><span class="line">    f-&gt;type = FD_DEVICE;</span><br><span class="line">    f-&gt;major = ip-&gt;major;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    f-&gt;type = FD_INODE;</span><br><span class="line">    f-&gt;off = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  f-&gt;ip = ip;</span><br><span class="line">  f-&gt;readable = !(omode &amp; O_WRONLY);</span><br><span class="line">  f-&gt;writable = (omode &amp; O_WRONLY) || (omode &amp; O_RDWR);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((omode &amp; O_TRUNC) &amp;&amp; ip-&gt;type == T_FILE)&#123;</span><br><span class="line">    itrunc(ip);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  iunlock(ip);</span><br><span class="line">  end_op();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> fd;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Lab 9 Task 2</span></span><br><span class="line"><span class="function">uint64 <span class="title">sys_symlink</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span> target[MAXPATH], path[MAXPATH];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; MAXPATH; i++) </span><br><span class="line">    target[i] = path[i] = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (argstr(<span class="number">0</span>, target, MAXPATH) &lt; <span class="number">0</span> || argstr(<span class="number">1</span>, path, MAXPATH) &lt; <span class="number">0</span>) </span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">int</span> target_len = <span class="built_in">strlen</span>(target);</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">ip</span>;</span></span><br><span class="line">  begin_op();</span><br><span class="line">  <span class="comment">// check symbolic name whether already exist.</span></span><br><span class="line">  <span class="keyword">if</span> ((ip = namei(path)) != <span class="number">0</span>) &#123;</span><br><span class="line">    end_op();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// create symbolic file.</span></span><br><span class="line">  <span class="keyword">if</span> ((ip = create(path, T_SYMLINK, <span class="number">0</span>, <span class="number">0</span>)) == <span class="number">0</span>) &#123;</span><br><span class="line">    end_op();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// write target path to symbolic file data field.</span></span><br><span class="line">  <span class="keyword">if</span> (target_len != writei(ip, <span class="number">0</span>, (uint64) target, <span class="number">0</span>, target_len)) &#123;</span><br><span class="line">    iunlockput(ip);</span><br><span class="line">    end_op();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  iunlockput(ip);</span><br><span class="line">  end_op();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>运行结果：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/wzmw-zr/blog-images/lab9-result.png"></p>
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/03/28/MIT6-S081-Lab8-Locks/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6-S081-Lab8-Locks</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">wzmw-zr</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
