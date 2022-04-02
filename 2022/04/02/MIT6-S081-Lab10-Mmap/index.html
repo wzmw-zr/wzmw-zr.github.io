@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="wzmw-zr">
+    
+    <title>
+        
+            MIT6-S081-Lab10-Mmap |
+        
+        无字铭文のBlog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                无字铭文のBlog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                CATEGORIES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">CATEGORIES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">MIT6-S081-Lab10-Mmap</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">wzmw-zr</span>
+                        
+                            <span class="author-label">Lv2</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-04-02 10:24:23</span>
+        <span class="mobile">2022-04-02 10:24</span>
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Lab-10-Mmap"><a href="#Lab-10-Mmap" class="headerlink" title="Lab 10 Mmap"></a>Lab 10 Mmap</h1><p>本次实验需要实现mmap，不过仅需要实现将文件映射到内存的功能。</p>
+<p> 不过本实验的测试较弱，只为了通过测试的实现会比较简单，收获并不算多，可能在以后面试时被问mmap的实现时能够扯几句。。。，不过也帮助回顾了内存分配部分的知识。</p>
+<h2 id="Task-1-Mmap"><a href="#Task-1-Mmap" class="headerlink" title="Task 1 Mmap"></a>Task 1 Mmap</h2><p>为每个进程记录mmap映射的内容，定义与VMA（virtual memory area）对应的数据结构，记录address, length, permissions, file等。因为xv6的内核没有内核的内存分配器，可以声明固定大小的VMA数组，16的长度就够用了。</p>
+<p>定义的VMA的结构:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Lab 10</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vma</span> &#123;</span></span><br><span class="line">  uint64 addr;</span><br><span class="line">  uint64 len;</span><br><span class="line">  uint64 sz;</span><br><span class="line">  <span class="keyword">int</span> prot;</span><br><span class="line">  <span class="keyword">int</span> flags;</span><br><span class="line">  uint64 offset;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">file</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>同时需要修改<code>struct proc</code>:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Per-process state</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">spinlock</span> <span class="title">lock</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// p-&gt;lock must be held when using these:</span></span><br><span class="line">  <span class="class"><span class="keyword">enum</span> <span class="title">procstate</span> <span class="title">state</span>;</span>        <span class="comment">// Process state</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">parent</span>;</span>         <span class="comment">// Parent process</span></span><br><span class="line">  <span class="keyword">void</span> *chan;                  <span class="comment">// If non-zero, sleeping on chan</span></span><br><span class="line">  <span class="keyword">int</span> killed;                  <span class="comment">// If non-zero, have been killed</span></span><br><span class="line">  <span class="keyword">int</span> xstate;                  <span class="comment">// Exit status to be returned to parent&#x27;s wait</span></span><br><span class="line">  <span class="keyword">int</span> pid;                     <span class="comment">// Process ID</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// these are private to the process, so p-&gt;lock need not be held.</span></span><br><span class="line">  uint64 kstack;               <span class="comment">// Virtual address of kernel stack</span></span><br><span class="line">  uint64 sz;                   <span class="comment">// Size of process memory (bytes)</span></span><br><span class="line">  <span class="keyword">pagetable_t</span> pagetable;       <span class="comment">// User page table</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> *<span class="title">trapframe</span>;</span> <span class="comment">// data page for trampoline.S</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">context</span> <span class="title">context</span>;</span>      <span class="comment">// swtch() here to run process</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">ofile</span>[<span class="title">NOFILE</span>];</span>  <span class="comment">// Open files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">cwd</span>;</span>           <span class="comment">// Current directory</span></span><br><span class="line">  <span class="keyword">char</span> name[<span class="number">16</span>];               <span class="comment">// Process name (debugging)</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">vma</span> <span class="title">vmas</span>[16];</span>         <span class="comment">// virtual memory area, Lab 10</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>实验要求懒惰分配页面（在usertrap发生page fault才获取物理页面），这是为了保证mmap大文件速度够快，且能够处理比物理内存更大的文件。</p>
+<p>实现mmap：在进程的地址空间中找到一个没有使用的区域，来映射文件，然后将一个VMA加入进程的映射区域表。VMA应当具有被映射的文件指针<code>struct file *</code>，mmap应当增加文件的引用数量，这样当文件被关闭时结构不会消失（使用filedup）。</p>
+<p>因为之前要求懒惰分配页面了，所以当被映射的区域发生page-fault时，分配物理内存，从相关文件中读取4096字节到该页面，并将其映射到用户地址空间。使用readi读取文件内容，使用readi需要保证已经持有inode的锁。不要忘了在页面上正确设置权限。同时记得修改uvmcopy和uvmunmap。</p>
+<p>修改fork保证子进程有和父进程相同的映射区域。记得增加VMA中struct file的引用数量。如果孩子发生了page fault，可以分配一个新的物理页面而不是和父亲共享物理页面。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">uint64 <span class="title">sys_mmap</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  uint64 addr;</span><br><span class="line">  <span class="keyword">int</span> length, prot, flags, fd, offset;</span><br><span class="line">  <span class="built_in">argaddr</span>(<span class="number">0</span>, &amp;addr);</span><br><span class="line">  <span class="built_in">argint</span>(<span class="number">1</span>, &amp;length);</span><br><span class="line">  <span class="built_in">argint</span>(<span class="number">2</span>, &amp;prot);</span><br><span class="line">  <span class="built_in">argint</span>(<span class="number">3</span>, &amp;flags);</span><br><span class="line">  <span class="built_in">argint</span>(<span class="number">4</span>, &amp;fd);</span><br><span class="line">  <span class="built_in">argint</span>(<span class="number">5</span>, &amp;offset);</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> <span class="built_in">myproc</span>();</span><br><span class="line">  uint64 ret = p-&gt;sz;</span><br><span class="line">  <span class="comment">// find empty vma.</span></span><br><span class="line">  <span class="keyword">int</span> ind;</span><br><span class="line">  <span class="keyword">for</span> (ind = <span class="number">0</span>; ind &lt; <span class="number">16</span>; ind++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!p-&gt;vmas[ind].file) <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// no empty vma.</span></span><br><span class="line">  <span class="keyword">if</span> (ind == <span class="number">16</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0xffffffffffffffff</span>;</span><br><span class="line">  <span class="comment">// try to write on read-only file.</span></span><br><span class="line">  <span class="keyword">if</span> (p-&gt;ofile[fd]-&gt;readable &amp;&amp; !p-&gt;ofile[fd]-&gt;writable &amp;&amp; (p-&gt;vmas[ind].prot &amp; PROT_WRITE))</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0xffffffffffffffff</span>;</span><br><span class="line">  p-&gt;vmas[ind].addr = p-&gt;sz;</span><br><span class="line">  p-&gt;vmas[ind].len = length;</span><br><span class="line">  p-&gt;vmas[ind].sz = length;</span><br><span class="line">  p-&gt;vmas[ind].prot = prot;</span><br><span class="line">  p-&gt;vmas[ind].flags = flags;</span><br><span class="line">  p-&gt;vmas[ind].file = <span class="built_in">filedup</span>(p-&gt;ofile[fd]);</span><br><span class="line">  p-&gt;vmas[ind].offset = offset;</span><br><span class="line">  <span class="comment">// Lazy Allocate</span></span><br><span class="line">  <span class="keyword">for</span> (uint64 va = <span class="built_in">PGROUNDUP</span>(p-&gt;sz); va &lt; <span class="built_in">PGROUNDUP</span>(p-&gt;sz + length); va += PGSIZE) &#123;</span><br><span class="line">    <span class="keyword">pte_t</span> *pte = <span class="built_in">walk</span>(p-&gt;pagetable, va, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (pte == <span class="number">0</span>)</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">-1</span>); <span class="comment">// out of memory, exit.</span></span><br><span class="line">    *pte &amp;= ~PTE_V;</span><br><span class="line">  &#125;</span><br><span class="line">  p-&gt;sz += length;</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发生page fault时分配页面，我这只认为virtual memory area会懒惰分配，其他的都是正常分配。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// handle an interrupt, exception, or system call from user space.</span></span><br><span class="line"><span class="comment">// called from trampoline.S</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">usertrap</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> which_dev = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((r_sstatus() &amp; SSTATUS_SPP) != <span class="number">0</span>)</span><br><span class="line">    panic(<span class="string">&quot;usertrap: not from user mode&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// send interrupts and exceptions to kerneltrap(),</span></span><br><span class="line">  <span class="comment">// since we&#x27;re now in the kernel.</span></span><br><span class="line">  w_stvec((uint64)kernelvec);</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// save user program counter.</span></span><br><span class="line">  p-&gt;trapframe-&gt;epc = r_sepc();</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(r_scause() == <span class="number">8</span>)&#123;</span><br><span class="line">    <span class="comment">// system call</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(p-&gt;killed)</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sepc points to the ecall instruction,</span></span><br><span class="line">    <span class="comment">// but we want to return to the next instruction.</span></span><br><span class="line">    p-&gt;trapframe-&gt;epc += <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// an interrupt will change sstatus &amp;c registers,</span></span><br><span class="line">    <span class="comment">// so don&#x27;t enable until done with those registers.</span></span><br><span class="line">    intr_on();</span><br><span class="line"></span><br><span class="line">    syscall();</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span>((which_dev = devintr()) != <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="comment">// ok</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// Lab 10</span></span><br><span class="line">    <span class="keyword">if</span> (r_scause() == <span class="number">13</span> || r_scause() == <span class="number">15</span>) &#123;</span><br><span class="line">      <span class="comment">// page fault from user space.</span></span><br><span class="line">      uint64 va = r_stval();</span><br><span class="line">      <span class="comment">// virtual address higher than any allocated with sbrk.</span></span><br><span class="line">      <span class="keyword">if</span> (va &gt;= p-&gt;sz)</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      <span class="comment">// faults on invalid page below user stack (on guard page)</span></span><br><span class="line">      <span class="keyword">if</span> ((va &lt; PGROUNDDOWN(p-&gt;trapframe-&gt;sp)) &amp;&amp;</span><br><span class="line">          (va &gt;= (PGROUNDDOWN(p-&gt;trapframe-&gt;sp) - PGSIZE)))</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      <span class="keyword">int</span> ind;</span><br><span class="line">      <span class="keyword">for</span> (ind = <span class="number">0</span>; ind &lt; <span class="number">16</span>; ind++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p-&gt;vmas[ind].file &amp;&amp; p-&gt;vmas[ind].addr &lt;= va &amp;&amp; p-&gt;vmas[ind].addr + p-&gt;vmas[ind].len &gt; va) <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// printf(&quot;ind = %d, va = %p, file sva = %p, file eva = %p\n&quot;, ind, va, p-&gt;vmas[ind].addr, p-&gt;vmas[ind].addr + p-&gt;vmas[ind].len);</span></span><br><span class="line">      va = PGROUNDDOWN(va);</span><br><span class="line">      <span class="comment">// allocate physical page.</span></span><br><span class="line">      <span class="keyword">char</span> *pa = (<span class="keyword">char</span> *) kalloc();</span><br><span class="line">      <span class="comment">// out of memory.</span></span><br><span class="line">      <span class="keyword">if</span> (pa == <span class="number">0</span>)</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">      <span class="comment">// zero fill page, and map it.</span></span><br><span class="line">      <span class="built_in">memset</span>(pa, <span class="number">0</span>, PGSIZE);</span><br><span class="line">      <span class="keyword">if</span> (ind != <span class="number">16</span>) &#123;</span><br><span class="line">        <span class="comment">// read file content to page.</span></span><br><span class="line">        ilock(p-&gt;vmas[ind].file-&gt;ip);</span><br><span class="line">        readi(p-&gt;vmas[ind].file-&gt;ip, <span class="number">0</span>, (uint64) pa, va - p-&gt;vmas[ind].addr, PGSIZE);</span><br><span class="line">        iunlock(p-&gt;vmas[ind].file-&gt;ip);</span><br><span class="line">        <span class="comment">// set flags of page.</span></span><br><span class="line">        <span class="keyword">int</span> flags = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (p-&gt;vmas[ind].prot &amp; PROT_READ) flags |= PTE_R;</span><br><span class="line">        <span class="keyword">if</span> (p-&gt;vmas[ind].prot &amp; PROT_WRITE) flags |= PTE_W;</span><br><span class="line">        <span class="keyword">if</span> (p-&gt;vmas[ind].prot &amp; PROT_EXEC) flags |= PTE_X;</span><br><span class="line">        mappages(p-&gt;pagetable, va, PGSIZE, (uint64) pa, flags | PTE_U);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        mappages(p-&gt;pagetable, va, PGSIZE, (uint64) pa, PTE_W | PTE_R | PTE_U | PTE_X);</span><br><span class="line">      &#125;</span><br><span class="line">      usertrapret();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;usertrap(): unexpected scause %p pid=%d\n&quot;</span>, r_scause(), p-&gt;pid);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;            sepc=%p stval=%p\n&quot;</span>, r_sepc(), r_stval());</span><br><span class="line">    p-&gt;killed = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(p-&gt;killed)</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// give up the CPU if this is a timer interrupt.</span></span><br><span class="line">  <span class="keyword">if</span>(which_dev == <span class="number">2</span>)</span><br><span class="line">    yield();</span><br><span class="line"></span><br><span class="line">  usertrapret();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改后的uvmcopy和uvmunmap：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Given a parent process&#x27;s page table, copy</span></span><br><span class="line"><span class="comment">// its memory into a child&#x27;s page table.</span></span><br><span class="line"><span class="comment">// Copies both the page table and the</span></span><br><span class="line"><span class="comment">// physical memory.</span></span><br><span class="line"><span class="comment">// returns 0 on success, -1 on failure.</span></span><br><span class="line"><span class="comment">// frees any allocated pages on failure.</span></span><br><span class="line"><span class="function"><span class="keyword">int</span></span></span><br><span class="line"><span class="function"><span class="title">uvmcopy</span><span class="params">(<span class="keyword">pagetable_t</span> old, <span class="keyword">pagetable_t</span> <span class="keyword">new</span>, uint64 sz)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">pte_t</span> *pte;</span><br><span class="line">  uint64 pa, i;</span><br><span class="line">  uint flags;</span><br><span class="line">  <span class="keyword">char</span> *mem;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; sz; i += PGSIZE)&#123;</span><br><span class="line">    <span class="keyword">if</span>((pte = walk(old, i, <span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">      panic(<span class="string">&quot;uvmcopy: pte should exist&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span>) &#123;</span><br><span class="line">      pa = PTE2PA(*pte);</span><br><span class="line">      flags = PTE_FLAGS(*pte);</span><br><span class="line">      <span class="keyword">pte_t</span> *npte = walk(<span class="keyword">new</span>, i, <span class="number">1</span>);</span><br><span class="line">      *npte = *pte;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      pa = PTE2PA(*pte);</span><br><span class="line">      flags = PTE_FLAGS(*pte);</span><br><span class="line">      <span class="keyword">if</span>((mem = kalloc()) == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">goto</span> err;</span><br><span class="line">      memmove(mem, (<span class="keyword">char</span>*)pa, PGSIZE);</span><br><span class="line">      <span class="keyword">if</span>(mappages(<span class="keyword">new</span>, i, PGSIZE, (uint64)mem, flags) != <span class="number">0</span>)&#123;</span><br><span class="line">        kfree(mem);</span><br><span class="line">        <span class="keyword">goto</span> err;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// panic(&quot;uvmcopy: page not present&quot;);</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"> err:</span><br><span class="line">  uvmunmap(<span class="keyword">new</span>, <span class="number">0</span>, i / PGSIZE, <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Remove npages of mappings starting from va. va must be</span></span><br><span class="line"><span class="comment">// page-aligned. The mappings must exist.</span></span><br><span class="line"><span class="comment">// Optionally free the physical memory.</span></span><br><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">uvmunmap</span><span class="params">(<span class="keyword">pagetable_t</span> pagetable, uint64 va, uint64 npages, <span class="keyword">int</span> do_free)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint64 a;</span><br><span class="line">  <span class="keyword">pte_t</span> *pte;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>((va % PGSIZE) != <span class="number">0</span>)</span><br><span class="line">    panic(<span class="string">&quot;uvmunmap: not aligned&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(a = va; a &lt; va + npages*PGSIZE; a += PGSIZE)&#123;</span><br><span class="line">    <span class="keyword">if</span>((pte = walk(pagetable, a, <span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">      panic(<span class="string">&quot;uvmunmap: walk&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">      <span class="comment">// panic(&quot;uvmunmap: not mapped&quot;);</span></span><br><span class="line">    <span class="keyword">if</span>(PTE_FLAGS(*pte) == PTE_V)</span><br><span class="line">      panic(<span class="string">&quot;uvmunmap: not a leaf&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(do_free)&#123;</span><br><span class="line">      uint64 pa = PTE2PA(*pte);</span><br><span class="line">      kfree((<span class="keyword">void</span>*)pa);</span><br><span class="line">    &#125;</span><br><span class="line">    *pte = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改后的fork：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create a new process, copying the parent.</span></span><br><span class="line"><span class="comment">// Sets up child kernel stack to return as if from fork() system call.</span></span><br><span class="line"><span class="function"><span class="keyword">int</span></span></span><br><span class="line"><span class="function"><span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i, pid;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">np</span>;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Allocate process.</span></span><br><span class="line">  <span class="keyword">if</span>((np = allocproc()) == <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Copy user memory from parent to child.</span></span><br><span class="line">  <span class="keyword">if</span>(uvmcopy(p-&gt;pagetable, np-&gt;pagetable, p-&gt;sz) &lt; <span class="number">0</span>)&#123;</span><br><span class="line">    freeproc(np);</span><br><span class="line">    release(&amp;np-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  np-&gt;sz = p-&gt;sz;</span><br><span class="line"></span><br><span class="line">  np-&gt;parent = p;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// copy saved user registers.</span></span><br><span class="line">  *(np-&gt;trapframe) = *(p-&gt;trapframe);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Cause fork to return 0 in the child.</span></span><br><span class="line">  np-&gt;trapframe-&gt;a0 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// increment reference counts on open file descriptors.</span></span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; NOFILE; i++)</span><br><span class="line">    <span class="keyword">if</span>(p-&gt;ofile[i])</span><br><span class="line">      np-&gt;ofile[i] = filedup(p-&gt;ofile[i]);</span><br><span class="line">  np-&gt;cwd = idup(p-&gt;cwd);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Lab 10</span></span><br><span class="line">  <span class="comment">// copy pages of file in virtual memory area.</span></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!p-&gt;vmas[i].file) <span class="keyword">continue</span>;</span><br><span class="line">    np-&gt;vmas[i].addr = p-&gt;vmas[i].addr;</span><br><span class="line">    np-&gt;vmas[i].len = p-&gt;vmas[i].len;</span><br><span class="line">    np-&gt;vmas[i].sz = p-&gt;vmas[i].sz;</span><br><span class="line">    np-&gt;vmas[i].prot = p-&gt;vmas[i].prot;</span><br><span class="line">    np-&gt;vmas[i].flags = p-&gt;vmas[i].flags;</span><br><span class="line">    np-&gt;vmas[i].file = filedup(p-&gt;vmas[i].file);</span><br><span class="line">    np-&gt;vmas[i].offset = p-&gt;vmas[i].offset;</span><br><span class="line">    <span class="comment">// Lazy Allocate</span></span><br><span class="line">    <span class="keyword">for</span> (uint64 va = PGROUNDUP(np-&gt;vmas[i].addr); va &lt; PGROUNDUP(np-&gt;vmas[i].addr + np-&gt;vmas[i].len); va += PGSIZE) &#123;</span><br><span class="line">      <span class="keyword">pte_t</span> *pte = walk(np-&gt;pagetable, va, <span class="number">1</span>);</span><br><span class="line">      <span class="keyword">if</span> (pte == <span class="number">0</span>)</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>); <span class="comment">// out of memory, exit.</span></span><br><span class="line">      *pte &amp;= ~PTE_V;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  safestrcpy(np-&gt;name, p-&gt;name, <span class="keyword">sizeof</span>(p-&gt;name));</span><br><span class="line"></span><br><span class="line">  pid = np-&gt;pid;</span><br><span class="line"></span><br><span class="line">  np-&gt;state = RUNNABLE;</span><br><span class="line"></span><br><span class="line">  release(&amp;np-&gt;lock);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> pid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>实现munmap：找到地址范围所属的VMA，并unmap特定的page（使用uvmunmap）。如果munmap移除了之前mmap的所有page，它应当减少对应文件的引用数量。如果一个被解除映射的page已经被修改了，并且文件是以MAP_SHARED的方式被映射，将page写回文件（看filewrite找启发），不过我是不论什么情况都写回文件。。。</p>
+<p>修改exit解除进程中被映射区域。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">uint64 <span class="title">sys_munmap</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  uint64 addr;</span><br><span class="line">  <span class="keyword">int</span> len;</span><br><span class="line">  argaddr(<span class="number">0</span>, &amp;addr);</span><br><span class="line">  argint(<span class="number">1</span>, &amp;len);</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  <span class="comment">// find corresponding vritual memory area.</span></span><br><span class="line">  <span class="keyword">int</span> ind;</span><br><span class="line">  <span class="keyword">for</span> (ind = <span class="number">0</span>; ind &lt; <span class="number">16</span>; ind++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (p-&gt;vmas[ind].file &amp;&amp; addr &gt;= p-&gt;vmas[ind].addr &amp;&amp; addr &lt;= p-&gt;vmas[ind].addr + p-&gt;vmas[ind].sz) <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// not find corresponding virtual memory area.</span></span><br><span class="line">  <span class="keyword">if</span> (ind == <span class="number">16</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">// write pages back to file (regradless of dirty bit)</span></span><br><span class="line">  filewrite(p-&gt;vmas[ind].file, addr, len);</span><br><span class="line">  uvmunmap(p-&gt;pagetable, PGROUNDUP(addr), (PGROUNDDOWN(addr + len) - PGROUNDUP(addr)) / PGSIZE, <span class="number">1</span>);</span><br><span class="line">  <span class="comment">// update addr and len field of vma.</span></span><br><span class="line">  <span class="keyword">if</span> (addr == p-&gt;vmas[ind].addr) p-&gt;vmas[ind].addr += len;</span><br><span class="line">  p-&gt;vmas[ind].len -= len;</span><br><span class="line">  <span class="comment">// if vma doesn&#x27;t hold file content, close file.</span></span><br><span class="line">  <span class="keyword">if</span> (p-&gt;vmas[ind].len == <span class="number">0</span>) &#123;</span><br><span class="line">    fileclose(p-&gt;vmas[ind].file);</span><br><span class="line">    p-&gt;vmas[ind].file = <span class="number">0</span>;</span><br><span class="line">    p-&gt;sz -= p-&gt;vmas[ind].sz;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改后的exit：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Exit the current process.  Does not return.</span></span><br><span class="line"><span class="comment">// An exited process remains in the zombie state</span></span><br><span class="line"><span class="comment">// until its parent calls wait().</span></span><br><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">exit</span><span class="params">(<span class="keyword">int</span> status)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(p == initproc)</span><br><span class="line">    panic(<span class="string">&quot;init exiting&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Close all open files.</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> fd = <span class="number">0</span>; fd &lt; NOFILE; fd++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(p-&gt;ofile[fd])&#123;</span><br><span class="line">      <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">f</span> =</span> p-&gt;ofile[fd];</span><br><span class="line">      fileclose(f);</span><br><span class="line">      p-&gt;ofile[fd] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Lab 10</span></span><br><span class="line">  <span class="comment">// Close open files in virtual memory area.</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!p-&gt;vmas[i].file) <span class="keyword">continue</span>;</span><br><span class="line">    uint64 addr = p-&gt;vmas[i].addr;</span><br><span class="line">    uint64 len = p-&gt;vmas[i].len;</span><br><span class="line">    filewrite(p-&gt;vmas[i].file, addr, len);</span><br><span class="line">    <span class="keyword">for</span> (uint64 va = PGROUNDUP(addr); va &lt; PGROUNDDOWN(addr + len); va += PGSIZE) &#123;</span><br><span class="line">      <span class="keyword">pte_t</span> *pte = walk(p-&gt;pagetable, va, <span class="number">0</span>);</span><br><span class="line">      <span class="keyword">if</span> ((*pte &amp; PTE_V) == <span class="number">0</span>) <span class="keyword">continue</span>;</span><br><span class="line">      uvmunmap(p-&gt;pagetable, va, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    p-&gt;vmas[i].len -= len;</span><br><span class="line">    fileclose(p-&gt;vmas[i].file);</span><br><span class="line">    p-&gt;vmas[i].file = <span class="number">0</span>;</span><br><span class="line">    p-&gt;sz -= p-&gt;vmas[i].sz;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  begin_op();</span><br><span class="line">  iput(p-&gt;cwd);</span><br><span class="line">  end_op();</span><br><span class="line">  p-&gt;cwd = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// we might re-parent a child to init. we can&#x27;t be precise about</span></span><br><span class="line">  <span class="comment">// waking up init, since we can&#x27;t acquire its lock once we&#x27;ve</span></span><br><span class="line">  <span class="comment">// acquired any other proc lock. so wake up init whether that&#x27;s</span></span><br><span class="line">  <span class="comment">// necessary or not. init may miss this wakeup, but that seems</span></span><br><span class="line">  <span class="comment">// harmless.</span></span><br><span class="line">  acquire(&amp;initproc-&gt;lock);</span><br><span class="line">  wakeup1(initproc);</span><br><span class="line">  release(&amp;initproc-&gt;lock);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// grab a copy of p-&gt;parent, to ensure that we unlock the same</span></span><br><span class="line">  <span class="comment">// parent we locked. in case our parent gives us away to init while</span></span><br><span class="line">  <span class="comment">// we&#x27;re waiting for the parent lock. we may then race with an</span></span><br><span class="line">  <span class="comment">// exiting parent, but the result will be a harmless spurious wakeup</span></span><br><span class="line">  <span class="comment">// to a dead or wrong process; proc structs are never re-allocated</span></span><br><span class="line">  <span class="comment">// as anything else.</span></span><br><span class="line">  acquire(&amp;p-&gt;lock);</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">original_parent</span> =</span> p-&gt;parent;</span><br><span class="line">  release(&amp;p-&gt;lock);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// we need the parent&#x27;s lock in order to wake it up from wait().</span></span><br><span class="line">  <span class="comment">// the parent-then-child rule says we have to lock it first.</span></span><br><span class="line">  acquire(&amp;original_parent-&gt;lock);</span><br><span class="line"></span><br><span class="line">  acquire(&amp;p-&gt;lock);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Give any children to init.</span></span><br><span class="line">  reparent(p);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Parent might be sleeping in wait().</span></span><br><span class="line">  wakeup1(original_parent);</span><br><span class="line"></span><br><span class="line">  p-&gt;xstate = status;</span><br><span class="line">  p-&gt;state = ZOMBIE;</span><br><span class="line"></span><br><span class="line">  release(&amp;original_parent-&gt;lock);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Jump into the scheduler, never to return.</span></span><br><span class="line">  sched();</span><br><span class="line">  panic(<span class="string">&quot;zombie exit&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>实验运行结果如图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/wzmw-zr/blog-images/lab10-result.png"></p>
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/03/31/MIT6-S081-Lab9-File-System/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">MIT6-S081-Lab9-File-System</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">wzmw-zr</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
